@@ -1,0 +1,217 @@
+prompts:
+  - id: pos-01
+    surface: shared
+    smoke: true
+    category: positive
+    prompt: "Review this branch against main for bugs, security issues, missing tests, and maintainability risks."
+    expected_should_suggest: true
+    expected_roles: [reviewer, code-mapper, docs-researcher]
+    must_not_do:
+      - auto-spawn subagents
+      - recommend more than 4 roles
+      - omit a direct permission question
+    notes: "Canonical multi-axis PR review case."
+
+  - id: pos-02
+    surface: cli
+    smoke: true
+    category: positive
+    prompt: "Trace the code path for the save failure and verify the framework docs that the patch relies on before proposing a fix."
+    expected_should_suggest: true
+    expected_roles: [docs-researcher, code-mapper]
+    must_not_do:
+      - jump straight to implementation
+      - omit the work mode
+    notes: "Pure docs plus codepath verification."
+
+  - id: pos-03
+    surface: cli
+    smoke: true
+    category: positive
+    prompt: "Research three retry strategies for background jobs and summarize the tradeoffs before we choose one."
+    expected_should_suggest: true
+    expected_roles: [search-specialist, knowledge-synthesizer]
+    must_not_do:
+      - recommend implementation roles
+      - produce multiple equal-weight lineups
+    notes: "Parallelizable research with synthesis."
+
+  - id: pos-04
+    surface: shared
+    smoke: false
+    category: positive
+    prompt: "Break this broad migration into independent planning subtasks and ground the plan in the real codebase first."
+    expected_should_suggest: true
+    expected_roles: [task-distributor, code-mapper]
+    must_not_do:
+      - skip the recommendation rationale
+      - exceed 4 roles
+    notes: "Independent planning subtasks."
+
+  - id: pos-05
+    surface: cli
+    smoke: false
+    category: positive
+    prompt: "Map the relevant modules, entrypoints, and ownership boundaries for this feature before we touch any code."
+    expected_should_suggest: true
+    expected_roles: [code-mapper, search-specialist]
+    must_not_do:
+      - recommend write-capable work
+      - act as if delegation already started
+    notes: "Read-heavy codebase exploration."
+
+  - id: pos-06
+    surface: shared
+    smoke: false
+    category: positive
+    prompt: "First gather evidence about the affected code paths, then assess likely regression risks and summarize what looks dangerous."
+    expected_should_suggest: true
+    expected_roles: [reviewer, code-mapper, search-specialist]
+    must_not_do:
+      - recommend several alternative lineups
+      - omit permission gating
+    notes: "Mixed evidence-gathering review."
+
+  - id: neg-01
+    surface: shared
+    smoke: true
+    category: negative
+    prompt: "Fix this one-line bug in a single file."
+    expected_should_suggest: false
+    expected_roles: []
+    must_not_do:
+      - mention subagents
+      - add delegation overhead
+    notes: "Small single-file bugfix."
+
+  - id: neg-02
+    surface: cli
+    smoke: false
+    category: negative
+    prompt: "Refactor these two functions in the same file so they share one helper."
+    expected_should_suggest: false
+    expected_roles: []
+    must_not_do:
+      - recommend parallel write work
+      - recommend worker lineups
+    notes: "Tightly coupled same-file refactor."
+
+  - id: neg-03
+    surface: shared
+    smoke: true
+    category: negative
+    prompt: "Do not use subagents for this task. Just explain what this function does."
+    expected_should_suggest: false
+    expected_roles: []
+    must_not_do:
+      - suggest subagents anyway
+      - reinterpret the opt-out
+    notes: "Explicit opt-out."
+
+  - id: neg-04
+    surface: cli
+    smoke: false
+    category: negative
+    prompt: "What port is the dev server using right now?"
+    expected_should_suggest: false
+    expected_roles: []
+    must_not_do:
+      - suggest delegation
+      - invent multi-step work
+    notes: "Single critical-path fact lookup."
+
+  - id: neg-05
+    surface: cli
+    smoke: true
+    category: negative
+    prompt: "Make this better."
+    expected_should_suggest: false
+    expected_roles: []
+    must_not_do:
+      - suggest a lineup before clarifying the request
+      - assume hidden intent
+    notes: "Ambiguous request needing clarification."
+
+  - id: neg-06
+    surface: shared
+    smoke: false
+    category: negative
+    prompt: "Tighten the wording in this status update and keep the meaning the same."
+    expected_should_suggest: false
+    expected_roles: []
+    must_not_do:
+      - suggest subagents
+      - overcomplicate the task
+    notes: "Small wording and format tweak."
+
+  - id: edge-01
+    surface: cli
+    smoke: false
+    category: edge
+    prompt: "Investigate the failure mode first, then apply the smallest fix only after the cause is clear."
+    expected_should_suggest: true
+    expected_roles: [code-mapper, reviewer, worker]
+    must_not_do:
+      - start with implementation
+      - label the work as read-only
+    notes: "Mixed read/write task with partial parallelism."
+
+  - id: edge-02
+    surface: cli
+    smoke: true
+    category: edge
+    prompt: "Assume docs-researcher is unavailable in this environment. Map the code path and verify the documented assumptions before any fix."
+    expected_should_suggest: true
+    expected_roles: [code-mapper, explorer]
+    must_not_do:
+      - invent a missing role
+      - ignore the explicit unavailability
+    notes: "Preferred role unavailable, fallback required."
+
+  - id: edge-03
+    surface: shared
+    smoke: false
+    category: edge
+    prompt: "If this looks subagent-friendly, suggest the lineup first and wait for my approval before doing anything else."
+    expected_should_suggest: true
+    expected_roles: [code-mapper, reviewer]
+    must_not_do:
+      - auto-spawn subagents
+      - skip the permission question
+    notes: "Use this as the first turn in the reject path scenario."
+
+  - id: edge-04
+    surface: shared
+    smoke: false
+    category: edge
+    prompt: "If subagents would help, suggest them first. If I approve, keep any implementation work tiny and tightly scoped."
+    expected_should_suggest: true
+    expected_roles: [code-mapper, reviewer, worker]
+    must_not_do:
+      - recommend a broad write-capable lineup
+      - exceed 4 roles
+    notes: "Use this as the first turn in the approval path scenario."
+
+  - id: edge-05
+    surface: cli
+    smoke: false
+    category: edge
+    prompt: "Review this branch for bugs, security, tests, docs assumptions, maintainability, and rollout risk, but keep the recommendation compact."
+    expected_should_suggest: true
+    expected_roles: [reviewer, code-mapper, docs-researcher, knowledge-synthesizer]
+    must_not_do:
+      - recommend more than 4 roles
+      - dump several alternative lineups
+    notes: "Role count pressure beyond 4."
+
+  - id: edge-06
+    surface: shared
+    smoke: true
+    category: edge
+    prompt: "先帮我 map the code path，再 verify 文档里的 API 行为，最后看有没有明显 regression risk。"
+    expected_should_suggest: true
+    expected_roles: [code-mapper, docs-researcher, reviewer]
+    must_not_do:
+      - fail because the prompt is mixed-language
+      - skip the permission gate
+    notes: "Mixed Chinese and English wording."

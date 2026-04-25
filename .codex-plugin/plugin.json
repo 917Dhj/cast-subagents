@@ -1,0 +1,32 @@
+{
+  "name": "cast-subagents",
+  "version": "0.1.0",
+  "description": "Suggest-only subagent delegation guidance for Codex tasks.",
+  "author": {
+    "name": "Cast Subagents Maintainers"
+  },
+  "license": "MIT",
+  "keywords": [
+    "subagents",
+    "delegation",
+    "review",
+    "planning",
+    "skills"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Cast Subagents",
+    "shortDescription": "Suggest subagent lineups without auto-spawning them.",
+    "longDescription": "Use Cast Subagents to decide when a Codex task merits a subagent lineup, present one concise recommendation, and require explicit approval before delegation.",
+    "developerName": "Cast Subagents Maintainers",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read"
+    ],
+    "defaultPrompt": [
+      "Review this branch for bugs, tests, security, and risk.",
+      "Map code paths and verify docs before changing code."
+    ]
+  }
+}

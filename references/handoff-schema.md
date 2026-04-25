@@ -1,0 +1,42 @@
+# Handoff Schema
+
+Every delegated task should use the same minimum payload shape.
+
+| Field | Required content | Why it exists | Good example |
+| --- | --- | --- | --- |
+| `goal` | the exact sub-problem the agent owns | prevents scope drift | `Map the auth failure path for the save-settings flow.` |
+| `success_criteria` | what counts as done | keeps the result verifiable | `Return the real call path, owning files, and likely failure boundary.` |
+| `scope_in` | what is in scope | defines ownership | `settings modal save path, client mutation, API handler` |
+| `scope_out` | what is explicitly out of scope | prevents adjacent work | `do not edit code, do not review unrelated forms` |
+| `relevant_paths` | files, folders, symbols, or entrypoints to inspect | speeds up grounding | `src/settings/, app/api/settings/, useSettingsForm` |
+| `constraints` | process or safety constraints | preserves parent intent | `read-only only; cite concrete files and symbols` |
+| `deliverable` | exact output expected from the subagent | makes integration easier | `3-5 bullet summary with file references` |
+| `verification` | how the parent will check the result | improves quality | `must include at least one concrete code path and one likely failure point` |
+| `write_policy` | read-only, mixed, or write-capable policy | avoids unsafe delegation | `read-only` |
+| `open_questions` | unresolved unknowns the agent should keep visible | prevents silent guessing | `whether the API uses optimistic updates before the save completes` |
+
+Recommended Markdown template:
+
+```md
+goal: Map the affected code path for the settings save failure.
+success_criteria: Identify the real execution path, likely failure boundary, and the files that own the behavior.
+scope_in: settings modal, client mutation, API route, response handling
+scope_out: unrelated settings pages, styling, copy updates
+relevant_paths: src/settings/, app/api/settings/, useSettingsForm
+constraints: read-only; no code edits; cite concrete files and symbols
+deliverable: concise summary with file references and one likely root cause candidate
+verification: parent can trace the same path from your references
+write_policy: read-only
+open_questions: whether retries or optimistic state updates affect the failure mode
+```
+
+Write-policy meanings:
+
+| Value | Meaning |
+| --- | --- |
+| `read-only` | the agent must not edit files |
+| `mixed` | the parent expects read-first work before any writes |
+| `write-capable` | the agent may edit, but only within the stated scope |
+
+v1 rule:
+- if a handoff would be weak without several open questions answered first, do not delegate yet
