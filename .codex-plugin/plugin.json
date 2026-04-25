@@ -3,10 +3,15 @@
   "version": "0.1.0",
   "description": "Suggest-only subagent delegation guidance for Codex tasks.",
   "author": {
-    "name": "Cast Subagents Maintainers"
+    "name": "Cast Subagents Maintainers",
+    "url": "https://github.com/917Dhj/cast-subagents"
   },
+  "homepage": "https://github.com/917Dhj/cast-subagents",
+  "repository": "https://github.com/917Dhj/cast-subagents",
   "license": "MIT",
   "keywords": [
+    "codex",
+    "plugin",
     "subagents",
     "delegation",
     "review",
@@ -24,6 +29,9 @@
       "Interactive",
       "Read"
     ],
+    "websiteURL": "https://github.com/917Dhj/cast-subagents",
+    "privacyPolicyURL": "https://github.com/917Dhj/cast-subagents/blob/main/PRIVACY.md",
+    "termsOfServiceURL": "https://github.com/917Dhj/cast-subagents/blob/main/LICENSE",
     "defaultPrompt": [
       "Review this branch for bugs, tests, security, and risk.",
       "Map code paths and verify docs before changing code."
