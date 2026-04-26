@@ -101,7 +101,7 @@ The manifest points Codex at:
 skills/
 ```
 
-This repository also contains a root `SKILL.md` for legacy repo-root skill installs. The `agents/openai.yaml` file is experimental/internal metadata and is not required for Codex plugin installation.
+The `agents/openai.yaml` file is experimental/internal metadata and is not required for Codex plugin installation.
 
 To validate the marketplace locally before publishing, add the local repository as a marketplace:
 
@@ -177,7 +177,6 @@ cast-subagents/
 │  └─ cast-subagents/
 ├─ references/
 ├─ evals/
-├─ SKILL.md                  # legacy skill entry for repo-root installs
 ├─ agents/openai.yaml        # experimental/internal metadata
 ├─ CHANGELOG.md
 ├─ SECURITY.md
