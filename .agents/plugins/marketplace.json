@@ -7,8 +7,9 @@
     {
       "name": "cast-subagents",
       "source": {
-        "source": "local",
-        "path": "./plugins/cast-subagents"
+        "source": "url",
+        "url": "https://github.com/917Dhj/cast-subagents.git",
+        "ref": "main"
       },
       "policy": {
         "installation": "AVAILABLE",

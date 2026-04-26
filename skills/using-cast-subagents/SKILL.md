@@ -1,6 +1,6 @@
 ---
 name: using-cast-subagents
-description: Use when starting any conversation or before any Codex response, action, file read, command, analysis, or clarifying question - establishes the always-on cast-subagents gate so Codex can decide whether to recommend a subagent lineup or stay silent.
+description: Use when starting any conversation or before any Codex response, action, file read, command, analysis, implementation, review, planning step, or clarifying question.
 ---
 
 # Using Cast Subagents
@@ -8,6 +8,14 @@ description: Use when starting any conversation or before any Codex response, ac
 <SUBAGENT-STOP>
 If you were dispatched as a subagent to execute a specific task, skip this skill and complete only the assigned task.
 </SUBAGENT-STOP>
+
+<EXTREMELY-IMPORTANT>
+Before any Codex response, action, file read, command, analysis, implementation, review, planning step, or clarifying question, you MUST read and apply this gate.
+
+This does not mean you should mention subagents every time. It means you must check whether a subagent suggestion is warranted.
+
+If the task is not subagent-friendly, stay completely silent about subagents and continue normally.
+</EXTREMELY-IMPORTANT>
 
 ## Mission
 
@@ -17,9 +25,16 @@ This is an always-on gatekeeper skill. It makes the cast-subagents rules visible
 
 ## Always-On Gate
 
-Before any response, clarifying question, file read, command, analysis, or task answer, read and apply this gate.
+Before any response, clarifying question, file read, command, analysis, implementation, review, planning step, or task answer, read and apply this gate.
 
 The purpose of this gate is not to force delegation. The purpose is to decide whether to suggest a lineup or stay silent.
+
+This is a two-stage process:
+
+1. Stage 1: internally check whether the task is subagent-friendly.
+2. Stage 2: only if Stage 1 says yes, output a visible subagent suggestion.
+
+Most checks should produce no visible output. If the task does not warrant a suggestion, do not mention this gate, this skill, subagents, or delegation.
 
 ## Decision Rule
 
@@ -47,6 +62,19 @@ Do not mention subagents when the task is:
 - blocked on one immediate fact lookup
 - wording-only
 - explicitly opted out of subagents
+
+## Red Flags
+
+These thoughts mean you are about to skip the gate. Stop and apply it first.
+
+| Thought | Reality |
+| --- | --- |
+| "This is probably simple." | Simple tasks still get the silent gate check. |
+| "I should inspect files first." | The gate comes before file reads or commands. |
+| "The user did not mention subagents." | The gate decides whether to suggest them. |
+| "Another skill applies." | Apply this gate before or alongside other process skills. |
+| "I can answer quickly." | Quick answers still start with the silent gate check. |
+| "Mentioning subagents would be annoying." | If the task is not a fit, stay silent after checking. |
 
 ## Minimum Lineups
 

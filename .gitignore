@@ -25,9 +25,6 @@ Desktop.ini
 .codex/
 OPEN_SOURCE_CODEX_PLUGIN_GUIDE.zh.md
 
-# Local plugin-install shim
-plugins/
-
 # Python caches
 __pycache__/
 *.py[cod]
