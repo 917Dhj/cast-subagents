@@ -64,16 +64,15 @@ Use only existing roles. If a preferred role is unavailable, say so and use `exp
 
 ## Suggestion Contract
 
-When suggesting, output exactly these four sections:
+When suggesting, write a short, conversational message. Do not use fixed section labels.
 
-```text
-Recommended lineup: <1-4 existing roles from the mapping>
-Why this fits: <one task-specific sentence>
-Work mode: <read-only | mixed | write-capable>
-Permission question: <direct approval question>
-```
+The message must convey these four pieces in order:
+1. why this task could benefit from subagents
+2. one recommended lineup of 1-4 exact role names, with task-specific reasons
+3. the work mode, stated exactly as `read-only`, `mixed`, or `write-capable`
+4. a direct permission question that matches the work mode
 
-Then stop. Do not spawn subagents or imply delegation has started.
+End with a question, then stop. Do not spawn subagents, answer task content, imply delegation has started, or use a stale template.
 
 ## Approval Outcome
 

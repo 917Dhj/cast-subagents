@@ -1,66 +1,80 @@
 # Suggestion Contract
 
-Every subagent suggestion must follow the same user-facing contract.
+Every subagent suggestion must follow a structured intent contract, not a rigid output template.
 
-Required section order:
+## Required Information
 
-1. `Recommended lineup`
-2. `Why this fits`
-3. `Work mode`
-4. `Permission question`
+Every suggestion must convey four pieces of information in this order:
 
-Required behavior:
+1. A brief opening that signals why the task could benefit from subagents.
+2. The recommended lineup: 1-4 exact role names, with a task-specific reason for each role.
+3. The work mode: exactly one of `read-only`, `mixed`, or `write-capable`.
+4. A direct permission question that matches the work mode.
 
-- recommend one lineup only
-- keep the lineup between 1 and 4 roles
-- use existing roles only
-- mention fallback substitutions explicitly
-- ask for permission before any spawn
+If any of these pieces is missing, the suggestion is incomplete.
 
-## Template 1: Read-Only Review
+## Order and Tone
 
-```text
-Recommended lineup: reviewer + code-mapper + docs-researcher
-Why this fits: reviewer can look for correctness and test risks, code-mapper can trace the real execution path, and docs-researcher can verify the API or framework assumptions in parallel.
-Work mode: read-only
-Permission question: Want me to use these subagents for this review?
-```
+- Keep the required information in order, but do not use fixed section labels.
+- Sound like a thoughtful collaborator, not a form.
+- Vary the wording each time; do not reuse the same opener or closing question.
+- Keep the whole message under roughly 4-6 short sentences.
+- Speak in first person when natural, such as "I think" or "I'd suggest".
+- Match the user's language when natural, but keep role names and work mode labels as exact English tokens.
 
-Use this when:
-- the task is a multi-axis review
-- code, docs, and risk assessment can be separated cleanly
+## Hard Rules
 
-## Template 2: Docs + Codepath Verification
+- Recommend exactly one lineup.
+- Do not list alternatives unless there is a real tradeoff the user must choose between.
+- Keep the lineup between 1 and 4 roles.
+- Use existing roles only.
+- Mention every recommended role by its exact role name.
+- Mention fallback substitutions explicitly.
+- State the work mode explicitly using one of: `read-only`, `mixed`, `write-capable`.
+- End with a question, not a statement.
+- Ask for permission before any spawn.
+- Do not answer the task content before the user approves or declines.
+- Do not describe results that do not exist yet.
+- Do not imply that any subagent has already started.
 
-```text
-Recommended lineup: docs-researcher + code-mapper
-Why this fits: docs-researcher can confirm the documented behavior while code-mapper traces the implementation path that depends on it.
-Work mode: read-only
-Permission question: Want me to use these subagents before we decide on a fix?
-```
+## Permission Question by Work Mode
 
-Use this when:
-- the main uncertainty is "what should happen" versus "what the code actually does"
+Match the closing question to the actual risk of the proposed work.
 
-## Template 3: Mixed Exploration + Implementation
+- `read-only`: invite the user to let the subagents investigate before deciding.
+- `mixed`: offer to start with read-only exploration and pause before any writes.
+- `write-capable`: flag the write risk explicitly and offer a read-only alternative if useful.
 
-```text
-Recommended lineup: code-mapper + reviewer + worker
-Why this fits: code-mapper can locate the real failure path, reviewer can pressure-test the likely fix, and worker can apply the smallest bounded change once the issue is understood.
-Work mode: mixed
-Permission question: Want me to use these subagents, with read-only exploration first and implementation only after that?
-```
+The exact wording is up to the model. The point is that the question should make the user feel the difference between "this is safe to try" and "this will change files."
 
-Use this when:
-- one bounded implementation step follows a read-heavy investigation
-- the write scope can be kept small and delayed until the issue is understood
+## Examples for Tone, Not for Copying
+
+Example 1: multi-axis PR review, read-only
+
+> I think this is a good fit for subagents. I'd put reviewer on correctness and test risks, code-mapper on the affected paths, and docs-researcher on the API assumptions in the diff, since those are separate angles they can inspect in parallel. Work mode is read-only. Want me to send them in to take a look before you decide?
+
+Example 2: codepath plus docs verification, read-only
+
+> This one splits cleanly. code-mapper can trace where the payment retry logic actually runs, and docs-researcher can verify what the Stripe API guarantees about idempotency keys. Both stay read-only. Should I have them gather evidence first?
+
+Example 3: mixed investigate-then-fix
+
+> I'd handle this in two passes. First, code-mapper and reviewer dig into the failure mode without touching anything; once we know what is broken, worker can apply the fix in a bounded scope. Mixed mode overall, and I would hold the writes until the read pass is done. Want me to start with the read-only exploration and pause before any edits?
+
+Example 4: option research, read-only
+
+> Worth splitting this. search-specialist can pull candidate libraries and recent benchmarks, and knowledge-synthesizer can fold the findings into a short tradeoff summary. Read-only. Should I have them put together the options before we pick one?
+
+Example 5: write-capable, with a read-only alternative
+
+> This task involves write-capable agents because worker would be making edits across a few files. code-mapper can scope the affected paths first, but the bulk of the work would change files. Want me to proceed in write-capable mode, or would you rather I start with code-mapper alone in read-only and confirm the plan before any changes?
 
 ## Failure Cases To Avoid
 
 Do not do these:
 
-- `I can spin up a few agents if you want.` without naming the lineup
+- suggesting "a few agents" without naming the exact lineup
 - listing 5 or more roles
 - offering three equally weighted lineups with no recommendation
 - saying or implying that delegation already started
-- asking a vague question like `Should I use subagents?` without showing the proposed lineup
+- asking a vague approval question without showing the proposed lineup

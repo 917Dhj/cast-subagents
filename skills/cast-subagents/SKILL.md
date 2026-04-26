@@ -118,28 +118,31 @@ Role-count rules:
 
 ## Suggestion Contract
 
-When you decide to suggest subagents, your output must contain exactly these four sections in this order:
+When you decide to suggest subagents, write a short, conversational message using structured intent instead of a rigid template. The message must convey these four pieces of information in this order:
 
-1. `Recommended lineup`
-2. `Why this fits`
-3. `Work mode`
-4. `Permission question`
+1. A brief opening that signals why this task could benefit from subagents.
+2. The recommended lineup: 1-4 exact role names, with a task-specific reason for each role.
+3. The work mode: exactly one of `read-only`, `mixed`, or `write-capable`.
+4. A direct permission question that matches the work mode.
 
-Formatting rules:
-- recommend one lineup only
-- do not list several alternatives unless there is a real tradeoff the user must choose between
-- keep the rationale concise and task-specific
-- make the permission question direct and explicit
+Tone rules:
+- sound like a thoughtful collaborator, not a form
+- vary the wording each time; do not reuse the same opener or closing question
+- keep the whole suggestion under roughly 4-6 short sentences
+- speak in first person when natural, such as "I think" or "I'd suggest"
+- match the user's language when natural, but keep role names and work mode labels as exact English tokens
+
+Hard rules:
+- recommend exactly one lineup
+- do not list alternatives unless there is a real tradeoff the user must choose between
+- mention every recommended role by its exact role name
+- state the work mode explicitly using one of: `read-only`, `mixed`, `write-capable`
+- End with a question, not a statement
 - do not answer the task content until the user approves or declines
+- do not describe results that do not exist yet
+- do not imply that any subagent has already started
 
-Output template:
-
-```text
-Recommended lineup: code-mapper + docs-researcher + reviewer
-Why this fits: code-mapper can trace the affected path, docs-researcher can verify the API assumptions, and reviewer can look for correctness and test risks in parallel.
-Work mode: read-only
-Permission question: Want me to use these subagents for this task?
-```
+For `read-only` mode, the closing question should invite the user to let the subagents investigate before deciding. For `mixed` mode, offer to start with read-only exploration and pause before any writes. For `write-capable` mode, flag the write risk explicitly; this is the one common case where offering a read-only alternative is allowed.
 
 ## Approval Gate
 

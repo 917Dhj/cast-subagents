@@ -86,6 +86,7 @@ Example prompts that should usually not trigger a suggestion:
 - `这个函数是做什么的？`
 
 When a suggestion is appropriate, Codex should recommend one lineup, explain why it fits, state the work mode, and ask for permission before spawning any subagent.
+The suggestion should read like a short natural message, not a fixed set of labeled fields.
 
 ## Development
 
