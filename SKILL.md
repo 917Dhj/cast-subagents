@@ -189,7 +189,7 @@ When the work is mixed:
 
 Read these references only when needed:
 
-- `../../references/decision-rules.md` for classification examples
-- `../../references/role-lineups.md` for role mapping examples
-- `../../references/handoff-schema.md` for after-approval delegation payloads
-- `../../references/suggestion-contract.md` for user-facing wording
+- `references/decision-rules.md` for classification examples
+- `references/role-lineups.md` for role mapping examples
+- `references/handoff-schema.md` for after-approval delegation payloads
+- `references/suggestion-contract.md` for user-facing wording
