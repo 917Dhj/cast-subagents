@@ -1,6 +1,6 @@
 ---
 name: using-cast-subagents
-description: Use when starting any conversation or before any Codex response, action, file read, command, analysis, implementation, review, planning step, or clarifying question.
+description: "Use when deciding whether to suggest Codex subagents or parallel agents before multi-lane work: branch/PR review for bugs, security, tests, maintainability, docs, or regression risk; codepath tracing plus docs/API verification; option research with tradeoff synthesis; auth/codebase mapping before risk assessment or planning. Stay silent for trivial single-file fixes, wording-only edits, one fact lookup, unclear requests, or explicit opt-out."
 ---
 
 # Using Cast Subagents

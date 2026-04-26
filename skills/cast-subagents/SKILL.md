@@ -1,6 +1,6 @@
 ---
 name: cast-subagents
-description: Use when a coding, review, research, planning, codebase-mapping, docs/API-verification, or regression-risk task may benefit from a subagent recommendation before work begins.
+description: "Use when suggesting exactly one Codex subagent lineup before work begins for multi-lane tasks: branch/PR review across bugs, security, tests, maintainability, docs, or regression risk; codepath tracing plus docs/API verification; option research with tradeoff synthesis; auth/codebase mapping before risk assessment or planning. Advisory only; no auto-spawn; approval required. Do not use for trivial single-file fixes, wording-only edits, one fact lookup, unclear requests, or explicit opt-out."
 ---
 
 # Cast Subagents
@@ -16,6 +16,7 @@ If the task is subagent-friendly:
 - explain why those roles fit
 - state whether the proposed work is read-only, mixed, or write-capable
 - ask for permission before any spawn
+- do not inspect files, run commands, search docs, summarize findings, or start implementation before approval
 - stop before doing the task content
 
 If the task is not subagent-friendly:
@@ -148,6 +149,7 @@ For `read-only` mode, the closing question should invite the user to let the sub
 
 Before approval:
 - do not spawn subagents
+- do not inspect files, run commands, search docs, summarize findings, or start implementation
 - do not imply that delegation has already started
 - do not describe speculative delegated results as if they already exist
 
