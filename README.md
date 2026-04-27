@@ -1,4 +1,4 @@
-<h1 align="center">cast-subagents</h1>
+<h1 align="center">Cast-Subagents</h1>
 
 <p align="center">
   A Codex skill that recommends the right subagent lineup for complex tasks — and waits for your approval before anything runs.
@@ -10,6 +10,9 @@
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
   <a href="https://github.com/917Dhj/cast-subagents"><img src="https://img.shields.io/badge/Codex-compatible-green.svg" alt="Codex Compatible"></a>
+  <a href="https://github.com/917Dhj/cast-subagents/stargazers"><img src="https://img.shields.io/github/stars/917Dhj/cast-subagents?style=flat" alt="GitHub Stars"></a>
+  <a href="https://github.com/917Dhj/cast-subagents"><img src="https://img.shields.io/badge/Status-Active-brightgreen.svg" alt="Status: Active"></a>
+  <a href="https://github.com/917Dhj/cast-subagents"><img src="https://img.shields.io/badge/PRs-Welcome-brightgreen.svg" alt="PRs Welcome"></a>
 </p>
 
 <p align="center">

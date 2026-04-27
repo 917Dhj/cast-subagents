@@ -1,4 +1,4 @@
-<h1 align="center">cast-subagents</h1>
+<h1 align="center">Cast-Subagents</h1>
 
 <p align="center">
     一个 Codex 技能，能在复杂任务来临时自动推荐最合适的子代理阵容——并在任何操作执行之前，等待你的批准。
@@ -10,6 +10,9 @@
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
   <a href="https://github.com/917Dhj/cast-subagents"><img src="https://img.shields.io/badge/Codex-compatible-green.svg" alt="Codex Compatible"></a>
+  <a href="https://github.com/917Dhj/cast-subagents/stargazers"><img src="https://img.shields.io/github/stars/917Dhj/cast-subagents?style=flat" alt="GitHub Stars"></a>
+  <a href="https://github.com/917Dhj/cast-subagents"><img src="https://img.shields.io/badge/Status-Active-brightgreen.svg" alt="Status: Active"></a>
+  <a href="https://github.com/917Dhj/cast-subagents"><img src="https://img.shields.io/badge/PRs-Welcome-brightgreen.svg" alt="PRs Welcome"></a>
 </p>
 
 <p align="center">
@@ -353,7 +356,7 @@ rm -rf "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents"
 
 可以。`references/decision-rules.md` 是任务形态分类的权威来源。`references/role-lineups.md` 控制阵容推荐。两者都是纯 Markdown 表格——直接编辑它们来添加、删除或调整规则。无需学习配置语言。
 
-## 🗂 项目结构
+## <h1 align="center">Cast-Subagents</h1>
 
 ```text
 cast-subagents/
