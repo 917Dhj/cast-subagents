@@ -56,6 +56,12 @@ Then install the AGENTS gate globally:
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global
 ```
 
+Optionally install the bundled minimal agent pack:
+
+```bash
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents/scripts/install-agent-roles.py" --scope global
+```
+
 Restart Codex after installation so the skill and AGENTS rules are loaded.
 
 ## AGENTS Gate Options
@@ -116,6 +122,26 @@ python3 "${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-installer/scripts/inst
 
 Then re-run the AGENTS gate installer. It is idempotent and only updates the managed block.
 
+## Optional Agent Pack
+
+Cast Subagents can run as a skill without the bundled agent roles. In that mode, it only recommends roles that are already available in your Codex environment, compresses the lineup when a role is missing, and leaves uncovered capabilities for the main thread.
+
+For the full experience, install the minimal role pack:
+
+```bash
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents/scripts/install-agent-roles.py" --scope global
+```
+
+Project-level install is also supported:
+
+```bash
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents/scripts/install-agent-roles.py" \
+  --scope project \
+  --path /path/to/repo
+```
+
+The installer copies bundled `.toml` files into `~/.codex/agents` or `<repo>/.codex/agents`. It does not overwrite existing roles unless you pass `--overwrite`.
+
 ## Decision Rules
 
 Cast Subagents should speak up for:
@@ -138,22 +164,17 @@ It should stay quiet for:
 
 ## Roles
 
-Preferred role names:
+Bundled capability roles:
 
-- `search-specialist`
-- `docs-researcher`
 - `code-mapper`
 - `reviewer`
 - `task-distributor`
-- `test-automator`
+- `docs-researcher`
+- `search-specialist`
 - `knowledge-synthesizer`
+- `test-automator`
 
-Fallback roles:
-
-- `explorer`
-- `worker`
-
-The role names are coordination labels. They should match the subagent roles available in your Codex environment.
+The skill chooses capabilities first, then maps them to role names that are actually available. If a role is missing, Cast Subagents should not invent a replacement. It should recommend a smaller useful lineup or keep the missing capability in the main thread.
 
 ## Project Structure
 
@@ -161,7 +182,12 @@ The role names are coordination labels. They should match the subagent roles ava
 cast-subagents/
 ├── SKILL.md
 ├── agents/
-│   └── openai.yaml
+│   ├── openai.yaml
+│   └── categories/
+│       ├── 01-core/
+│       ├── 02-research/
+│       ├── 03-planning/
+│       └── 04-quality/
 ├── references/
 │   ├── decision-rules.md
 │   ├── examples-negative.md
@@ -170,6 +196,7 @@ cast-subagents/
 │   ├── role-lineups.md
 │   └── suggestion-contract.md
 ├── scripts/
+│   ├── install-agent-roles.py
 │   └── install-agents-gate.py
 ├── CHANGELOG.md
 ├── LICENSE

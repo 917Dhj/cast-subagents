@@ -75,46 +75,48 @@ Follow this sequence every time this skill is invoked:
 7. Produce the suggestion message using the contract below.
 8. Stop and wait for approval.
 
-## Role Selection Rules
+## Capability Selection Rules
 
-Use only existing Codex roles. Do not invent new role names.
+Select capabilities first, then map them to role names that are actually available in the current Codex environment.
 
-Preferred roles:
-- `search-specialist`
-- `docs-researcher`
-- `code-mapper`
-- `reviewer`
-- `task-distributor`
-- `test-automator`
-- `knowledge-synthesizer`
+Bundled capability map:
 
-Fallback roles:
-- `explorer`
-- `worker`
+| Capability | Preferred bundled role | Work mode |
+| --- | --- | --- |
+| code mapping | `code-mapper` | read-only |
+| risk review | `reviewer` | read-only |
+| docs/API verification | `docs-researcher` | read-only |
+| search | `search-specialist` | read-only |
+| synthesis | `knowledge-synthesizer` | read-only |
+| planning | `task-distributor` | read-only |
+| test automation | `test-automator` | write-capable |
+
+Availability rules:
+- recommend only roles that are explicitly available in the current Codex session
+- do not invent role names
+- do not assume generic fallback roles exist
+- if a capability has no available role, drop that role from the lineup
+- if the dropped capability is important, say the main thread can cover it after approval
+- if no relevant role is available, stay silent during implicit checks and continue normally
+- if the user explicitly asks why no lineup is available, tell them to install the bundled agent pack
 
 Selection guidance:
 
-| Task shape | Recommended lineup | Mode |
-| --- | --- | --- |
-| Branch or PR review | `reviewer + code-mapper` | read-only |
-| Review with docs/API assumptions | `reviewer + code-mapper + docs-researcher` | read-only |
-| Codepath plus docs/API verification | `code-mapper + docs-researcher` | read-only |
-| Option research | `search-specialist + knowledge-synthesizer` | read-only |
-| Broad planning | `task-distributor + code-mapper` | read-only |
-| Codebase mapping | `code-mapper + search-specialist` | read-only |
-| Regression-risk evidence | `code-mapper + reviewer + search-specialist` | read-only |
-| Mixed investigate-then-fix | `code-mapper + reviewer + worker` | mixed |
-| Meta prompt asking for a default lineup | `code-mapper + reviewer` | read-only |
-
-Availability rules:
-- if a preferred role is unavailable, say so explicitly
-- substitute `explorer` for missing read-heavy roles
-- substitute `worker` for missing write-capable roles
-- if `docs-researcher` is unavailable for codepath plus docs verification, use `code-mapper + explorer`
+| Task shape | Capability lineup | Preferred role lineup when available | Mode |
+| --- | --- | --- | --- |
+| Branch or PR review | risk review + code mapping | `reviewer + code-mapper` | read-only |
+| Review with docs/API assumptions | risk review + code mapping + docs/API verification | `reviewer + code-mapper + docs-researcher` | read-only |
+| Codepath plus docs/API verification | code mapping + docs/API verification | `code-mapper + docs-researcher` | read-only |
+| Option research | search + synthesis | `search-specialist + knowledge-synthesizer` | read-only |
+| Broad planning | planning + code mapping | `task-distributor + code-mapper` | read-only |
+| Codebase mapping | code mapping + search | `code-mapper + search-specialist` | read-only |
+| Regression-risk evidence | code mapping + risk review + search | `code-mapper + reviewer + search-specialist` | read-only |
+| Exploration before test coverage | code mapping + risk review + test automation | `code-mapper + reviewer + test-automator` | mixed |
+| Meta prompt asking for a default lineup | code mapping + risk review | `code-mapper + reviewer` | read-only |
 
 Role-count rules:
 - default to 1-3 roles
-- use 4 roles only when the task genuinely has four distinct lanes
+- use 4 roles only when the task genuinely has four distinct lanes and all four roles are available
 - never exceed 4 roles
 
 ## Suggestion Contract

@@ -1,27 +1,42 @@
 # Role Lineups
 
-Use this table when choosing the single recommended lineup.
+Choose capabilities first. Then keep only the roles that are available in the current Codex environment.
 
-| Scenario | Recommended roles | Why these roles fit | Work mode | Fallback |
-| --- | --- | --- | --- | --- |
-| Multi-axis PR review | `reviewer` + `code-mapper` + `docs-researcher` | reviewer finds risks, code-mapper traces ownership, docs-researcher verifies assumptions | read-only | If `docs-researcher` is unavailable, use `explorer` for evidence gathering and say the docs specialist is unavailable. |
-| Read-heavy repo exploration | `code-mapper` + `search-specialist` | code-mapper traces the real path, search-specialist gathers high-signal evidence fast | read-only | Replace missing role with `explorer`. |
-| Docs + codepath verification | `docs-researcher` + `code-mapper` | the task splits naturally into docs truth and code truth | read-only | Replace either missing role with `explorer`, but mention the downgrade. |
-| Research + synthesis | `search-specialist` + `knowledge-synthesizer` | one agent gathers, the other consolidates | read-only | If `knowledge-synthesizer` is unavailable, keep one research role and synthesize in the main thread. |
-| Planning a broad change | `task-distributor` + `code-mapper` | task-distributor structures the work, code-mapper grounds it in the real repo | read-only | Replace missing read role with `explorer`. |
-| Exploration before a bounded fix | `code-mapper` + `reviewer` + `worker` | first understand, then risk-check, then apply one targeted implementation | mixed | If `worker` is unavailable, fall back to main-thread implementation after read-only delegation. |
-| Coverage-focused follow-up | `reviewer` + `test-automator` | reviewer finds risky gaps, test-automator adds the smallest regression coverage | write-capable | If `test-automator` is unavailable, use `worker` and state that test automation will be more general. |
-| Unavailable preferred role in a review task | `reviewer` + `explorer` | explorer stands in for evidence gathering when a specialist is missing | read-only | Always state the missing preferred role explicitly. |
+## Capability Map
 
-Compression rules:
+| Capability | Preferred bundled role | Use when | Missing-role behavior |
+| --- | --- | --- | --- |
+| code mapping | `code-mapper` | tracing code paths, ownership, or execution flow | Drop the capability or handle mapping in the main thread after approval. |
+| risk review | `reviewer` | finding correctness, security, test, or regression risks | Drop the capability if another role still covers a useful lane. |
+| docs/API verification | `docs-researcher` | verifying documented API/framework behavior | Mention that docs verification is not delegated; do not substitute an unknown role. |
+| search | `search-specialist` | gathering high-signal codebase or external evidence | Drop if code mapping or docs verification already covers the task. |
+| synthesis | `knowledge-synthesizer` | consolidating multiple research outputs | Synthesize in the main thread after other agents return. |
+| planning | `task-distributor` | decomposing broad work into bounded subtasks | Plan in the main thread if no planning role is available. |
+| test automation | `test-automator` | adding or updating targeted regression coverage | Do not suggest write-capable delegation unless this role or another explicit test role is available. |
 
+## Common Capability Lineups
+
+| Scenario | Capability lineup | Preferred roles when available | Work mode |
+| --- | --- | --- | --- |
+| Multi-axis PR review | risk review + code mapping + docs/API verification | `reviewer` + `code-mapper` + `docs-researcher` | read-only |
+| Read-heavy repo exploration | code mapping + search | `code-mapper` + `search-specialist` | read-only |
+| Docs + codepath verification | docs/API verification + code mapping | `docs-researcher` + `code-mapper` | read-only |
+| Research + synthesis | search + synthesis | `search-specialist` + `knowledge-synthesizer` | read-only |
+| Planning a broad change | planning + code mapping | `task-distributor` + `code-mapper` | read-only |
+| Exploration before test coverage | code mapping + risk review + test automation | `code-mapper` + `reviewer` + `test-automator` | mixed |
+| Coverage-focused follow-up | risk review + test automation | `reviewer` + `test-automator` | write-capable |
+
+## Compression Rules
+
+- Recommend exactly one lineup made only of available roles.
 - Prefer 2 roles over 3 when the task can still be answered well.
-- Prefer 3 roles over 4 unless four independent lanes are clearly justified.
+- If one unavailable capability is non-essential, drop it and keep the remaining useful lineup.
+- If a missing capability is important, mention that the main thread can cover it after approval.
+- If no relevant roles are available, stay silent during implicit checks and continue normally.
 - Never recommend 4 roles only to sound thorough.
-- If one role adds only marginal value, drop it.
 
-Write-safety rules:
+## Write-Safety Rules
 
-- Any lineup containing `worker` or `test-automator` is write-capable.
-- Mixed lineups should still start with read-only work.
-- When the task is same-file or same-scope implementation, do not suggest a write-capable lineup at all.
+- `test-automator` is write-capable because it may edit tests.
+- Mixed lineups should start with read-only work and pause before `test-automator` writes.
+- Do not suggest write-capable implementation work unless an explicit write-capable role for that work is available.
