@@ -4,7 +4,7 @@
   <b>A Codex skill that recommends the right subagent lineup for complex tasks — and waits for your approval before anything runs.</b>
 </p>
 <p align="center">
-  <a href="README.md">English</a> | <a href="README.zh.md">中文</a>
+  <a href="README.md">English</a> | <a href="README.zh.md">简体中文</a>
 </p>
 
 <p align="center">
