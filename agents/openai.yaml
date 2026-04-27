@@ -1,9 +1,4 @@
 interface:
   display_name: "Cast Subagents"
-  short_description: "Suggest subagent lineups without auto-spawning them."
+  short_description: "Suggest one subagent lineup before complex Codex work."
   default_prompt: "Check whether this task should get a subagent lineup before starting work."
-
-policy:
-  allow_implicit_invocation: true
-  primary_skill: "using-cast-subagents"
-  strategy_skill: "cast-subagents"

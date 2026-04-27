@@ -2,7 +2,7 @@
 
 ## 0.1.0
 
-- Initial public release preparation.
-- Add suggest-only subagent delegation policy.
-- Add broad entry skill and detailed policy skill.
-- Add evaluation prompts and rubric.
+- Refactor Cast Subagents into a pure Codex skill.
+- Add a managed AGENTS.md advisory gate installer.
+- Add capability-first role selection and an optional bundled agent pack.
+- Keep suggest-only subagent delegation policy and approval-before-work rules.

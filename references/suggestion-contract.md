@@ -29,7 +29,7 @@ If any of these pieces is missing, the suggestion is incomplete.
 - Keep the lineup between 1 and 4 roles.
 - Use existing roles only.
 - Mention every recommended role by its exact role name.
-- Mention fallback substitutions explicitly.
+- If a capability was dropped because its role is unavailable, mention the gap briefly.
 - State the work mode explicitly using one of: `read-only`, `mixed`, `write-capable`.
 - End with a question, not a statement.
 - Ask for permission before any spawn.
@@ -57,17 +57,17 @@ Example 2: codepath plus docs verification, read-only
 
 > This one splits cleanly. code-mapper can trace where the payment retry logic actually runs, and docs-researcher can verify what the Stripe API guarantees about idempotency keys. Both stay read-only. Should I have them gather evidence first?
 
-Example 3: mixed investigate-then-fix
+Example 3: mixed investigate-then-cover
 
-> I'd handle this in two passes. First, code-mapper and reviewer dig into the failure mode without touching anything; once we know what is broken, worker can apply the fix in a bounded scope. Mixed mode overall, and I would hold the writes until the read pass is done. Want me to start with the read-only exploration and pause before any edits?
+> I'd handle this in two passes. First, code-mapper and reviewer dig into the failure mode without touching anything; once we know what is actually risky, test-automator can add bounded regression coverage. Mixed mode overall, and I would hold the writes until the read pass is done. Want me to start with the read-only exploration and pause before any test edits?
 
 Example 4: option research, read-only
 
 > Worth splitting this. search-specialist can pull candidate libraries and recent benchmarks, and knowledge-synthesizer can fold the findings into a short tradeoff summary. Read-only. Should I have them put together the options before we pick one?
 
-Example 5: write-capable, with a read-only alternative
+Example 5: write-capable test coverage, with a read-only alternative
 
-> This task involves write-capable agents because worker would be making edits across a few files. code-mapper can scope the affected paths first, but the bulk of the work would change files. Want me to proceed in write-capable mode, or would you rather I start with code-mapper alone in read-only and confirm the plan before any changes?
+> This task involves write-capable delegation because test-automator would add or update regression tests. reviewer can identify the riskiest behavior first, but the coverage pass would change files. Want me to proceed in write-capable mode, or would you rather I start with reviewer alone in read-only and confirm the plan before any test edits?
 
 ## Failure Cases To Avoid
 
