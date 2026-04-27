@@ -143,24 +143,26 @@ Tell Codex:
 Fetch and follow instructions from https://raw.githubusercontent.com/917Dhj/cast-subagents/refs/heads/main/.codex/INSTALL.md
 ```
 
-Codex will clone the repository, install the AGENTS gate, and optionally install the bundled agent roles — then tell you to restart.
+Codex will install the skill with `npx skills add`, install the AGENTS gate, and optionally install the bundled agent roles — then tell you to restart.
 
 ### Manual install
 
-**1. Clone the repository into your Codex skills directory:**
+**1. Install the skill for Codex with npx Skills:**
 
 ```bash
-git clone https://github.com/917Dhj/cast-subagents.git "${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents"
+npx skills add 917Dhj/cast-subagents -a codex
 ```
+
+If the command opens an interactive prompt, choose Codex as the target agent.
 
 **2. Install the AGENTS advisory gate:**
 
 ```bash
 # Global — applies to all Codex workspaces (recommended)
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global
+python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global
 
 # Project-only
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents/scripts/install-agents-gate.py" \
+python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agents-gate.py" \
   --scope project \
   --path /path/to/repo
 ```
@@ -169,10 +171,10 @@ python3 "${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents/scripts/install-agent
 
 ```bash
 # Global
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents/scripts/install-agent-roles.py" --scope global
+python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agent-roles.py" --scope global
 
 # Project-only
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents/scripts/install-agent-roles.py" \
+python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agent-roles.py" \
   --scope project \
   --path /path/to/repo
 ```
@@ -186,13 +188,13 @@ Without the bundled roles, cast-subagents still works — it will suggest lineup
 Preview without writing:
 
 ```bash
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global --dry-run
+python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global --dry-run
 ```
 
 Remove the gate block:
 
 ```bash
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global --remove
+python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global --remove
 ```
 
 The installer manages only the `<!-- cast-subagents:start -->` ... `<!-- cast-subagents:end -->` block. If `AGENTS.md` already exists, everything outside that block is preserved. Re-running the installer updates the block in place.
@@ -200,8 +202,8 @@ The installer manages only the `<!-- cast-subagents:start -->` ... `<!-- cast-su
 ### Updating
 
 ```bash
-cd "${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents" && git pull
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global
+npx skills add 917Dhj/cast-subagents -a codex
+python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global
 ```
 
 The gate installer is idempotent — it updates the block in place.
