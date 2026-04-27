@@ -1,7 +1,7 @@
 <h1 align="center">Cast-Subagents</h1>
 
 <p align="center">
-    <b>一个 Codex 技能，能在复杂任务来临时自动推荐最合适的子代理阵容——并在任何操作执行之前，等待你的批准。</b>
+    <b>Codex 不会主动建议用子代理。Cast-Subagents 替你开这个口。</b>
 </p>
 <p align="center">
   <a href="README.md">English</a> | <a href="README.zh.md">简体中文</a>
@@ -19,40 +19,13 @@
 <p align="center">
   <img src="assets/cast-subagents-hero.png" alt="Cast Subagents 主图">
 </p>
-每当 Codex 任务大到值得并行代理时，你都会面临同样的额外操作：判断是否要拆分、选择哪些角色、写好委托指令，还要确保 Codex 真的会执行。cast-subagents 自动完成这些分析——它分类任务、挑选阵容、给出建议——然后在工作开始前停下来。批准步骤不是可选项。
+这种沉默是有代价的。每当一个任务天然地可以拆成多条独立线索——多维度的 PR 审查、代码路径加文档验证、有多条并行线程的选项调研——Codex 默认只会待在主线程里。你得自己察觉这个机会，自己决定派哪些角色，还得把委托请求写得足够清楚，Codex 才会执行。Cast-Subagents 做的就是这第一步识别：它发现那些适合委托的任务形态，在工作开始之前把阵容建议摆到你面前。
 
 ## 💬 效果预览
 
 cast-subagents 识别任务形态、命名阵容和工作模式、提出一个直接的问题，然后停止。在你同意之前，它不会触碰任务本身。
 
-```text
-> Review this branch against main for bugs, security issues, missing tests,
-  and maintainability risks.
-
-我觉得这个任务适合子代理来处理。我会安排 reviewer 负责正确性和测试风险，
-code-mapper 负责受影响的代码路径，docs-researcher 负责 diff 中的 API 假设——
-这三者可以并行覆盖不同的角度。工作模式为只读。需要我派他们去看看，你再做决定？
-
-> yes
-
-收到批准。Codex 将委托给 reviewer、code-mapper 和 docs-researcher。
-每个代理会独立汇报结果。
-```
-
-下面是一个任务沿着两条不同线索拆分的例子：
-
-```text
-> Trace the code path for the checkout error and verify the framework docs
-  that the patch relies on.
-
-这个任务可以干净地拆分。code-mapper 追踪 checkout 错误的实际执行路径，
-docs-researcher 验证框架文档对该行为的保证。两者都保持只读。需要我先
-让他们收集证据吗？
-
-> go ahead
-
-开始以只读模式委托给 code-mapper 和 docs-researcher。
-```
+![两个聊天示例，展示 cast-subagents 推荐子代理阵容](assets/cast-subagents-demo-chat.png)
 
 ## 🤔 为什么用 cast-subagents
 
@@ -192,50 +165,6 @@ python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-age
 不安装捆绑角色也没问题——cast-subagents 会使用 Codex 环境中已有的角色来推荐阵容。
 
 **4. 重启 Codex**，使技能和 AGENTS 规则生效。
-
-### 验证安装
-
-检查 AGENTS.md 中是否包含 gate 块：
-
-```bash
-grep -c "cast-subagents:start" "${CODEX_HOME:-$HOME/.codex}/AGENTS.md"
-```
-
-预期输出：`1`
-
-检查技能目录是否存在：
-
-```bash
-ls "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/SKILL.md"
-```
-
-### 更新
-
-重新运行 npx 安装命令：
-
-```bash
-npx skills add 917Dhj/cast-subagents -a codex
-```
-
-重新运行门控安装脚本（脚本是幂等的——会原地更新）：
-
-```bash
-python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global
-```
-
-### 卸载
-
-从 AGENTS.md 中移除建议门控块：
-
-```bash
-python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global --remove
-```
-
-删除技能目录：
-
-```bash
-rm -rf "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents"
-```
 
 ## 🧠 什么时候会触发建议
 
@@ -398,21 +327,9 @@ cast-subagents/
 
 `references/` 目录是实际改动发生的地方。`SKILL.md` 在运行时加载这些引用，因此你可以在不触及技能逻辑本身的情况下调整决策规则、阵容表和措辞。
 
----
-
-## 🛣 路线图
-
-以下是在考虑中的方向。没有任何内容是已承诺的。
-
-- 可能扩展任务形态库，覆盖更多混合模式模式，特别是探索-再重构流程。
-- 可能添加对中文和英文之外更多提示语言的显式支持。
-- 考虑为偏好按任务选择加入而非接收自动建议的用户提供可配置的"默认静默"模式。
-- 可能将角色可用性暴露为配置选项，使团队可以将阵容限制为他们实际部署的角色。
-- 可能添加自动评估工具，帮助贡献者验证新的决策规则不会破坏现有的静默用例。
-
 ## 🙏 致谢
 
-本项目的"始终在线门控"模式与"双 skill 架构"参考自 [obra/superpowers](https://github.com/obra/superpowers)。"通过 session bootstrap 机制确保门控在每个任务前运行"这一思路直接来自对该项目的学习。
+本项目的"始终在线门控"模式与 session-bootstrap 思路参考自 [obra/superpowers](https://github.com/obra/superpowers)。"通过 session bootstrap 机制确保门控在每个任务前运行"这一思路直接来自对该项目的学习。
 
 角色名称和阵容分类的设计与 [VoltAgent/awesome-codex-subagents](https://github.com/VoltAgent/awesome-codex-subagents) 兼容，已安装该集合的用户可以开箱即用。
 

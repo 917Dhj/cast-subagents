@@ -1,11 +1,12 @@
 <h1 align="center">Cast-Subagents</h1>
 
 <p align="center">
-  <b>A Codex skill that recommends the right subagent lineup for complex tasks — and waits for your approval before anything runs.</b>
+  <b>Codex stays quiet about subagents until you ask. Cast-Subagents speaks up first.</b>
 </p>
 <p align="center">
   <a href="README.md">English</a> | <a href="README.zh.md">简体中文</a>
 </p>
+
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
@@ -18,43 +19,13 @@
 <p align="center">
   <img src="assets/cast-subagents-hero.png" alt="Cast Subagents hero banner">
 </p>
-Every time a Codex task is large enough to benefit from parallel agents, you face the same overhead: decide whether to split it, figure out which roles to send, write the spawn instructions clearly enough that Codex actually follows through. cast-subagents handles that analysis automatically — it classifies the task, picks a lineup, and surfaces the suggestion before work begins. What it never does is spawn on its own. The approval step is not optional.
+That silence has a cost. Every time a task splits cleanly across multiple lanes — a multi-axis PR review, a codepath-plus-docs verification, an option research with parallel threads — Codex stays in the main thread by default. The user has to notice the opportunity, decide which roles to spawn, and phrase the request clearly enough that Codex follows through. Cast-Subagents handles that recognition step: it spots the task shapes that benefit from delegation and surfaces a lineup suggestion before work begins.
 
 ## 💬 See It In Action
 
 cast-subagents identifies the task shape, names the lineup and work mode, asks one direct question, then stops. It does not touch the task itself until you say go.
 
-```text
-> Review this branch against main for bugs, security issues, missing tests,
-  and maintainability risks.
-
-I think this is a good fit for subagents. I'd put reviewer on correctness
-and test risks, code-mapper on the affected paths, and docs-researcher on
-the API assumptions in the diff — those are separate angles they can cover
-in parallel. Work mode is read-only. Want me to send them in to take a look
-before you decide?
-
-> yes
-
-Approval received. Codex will now delegate to reviewer, code-mapper,
-and docs-researcher. Each agent reports back independently.
-```
-
-Here's an example where the task splits along two distinct lines:
-
-```text
-> Trace the code path for the checkout error and verify the framework docs
-  that the patch relies on.
-
-This one splits cleanly. code-mapper can trace where the checkout error
-actually runs, and docs-researcher can verify what the framework guarantees
-about that behavior. Both stay read-only. Should I have them gather evidence
-first?
-
-> go ahead
-
-Starting with read-only delegation to code-mapper and docs-researcher.
-```
+![Two chat examples showing cast-subagents recommending subagent lineups](assets/cast-subagents-demo-chat.png)
 
 ## 🤔 Why cast-subagents
 
@@ -199,64 +170,6 @@ python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" \
 Without the bundled roles, cast-subagents still works — it will suggest lineups using whatever roles are already available in your Codex environment.
 
 **4. Restart Codex** so the skill and AGENTS rules are loaded.
-
-### AGENTS gate options
-
-These commands expect `CAST_SUBAGENTS_HOME` to point at the installed skill directory. The default `npx` install uses `${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents`; the fallback flow in `.codex/INSTALL.md` uses `${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents`.
-
-Preview without writing:
-
-```bash
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" --scope global --dry-run
-```
-
-Remove the gate block:
-
-```bash
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" --scope global --remove
-```
-
-The installer manages only the `<!-- cast-subagents:start -->` ... `<!-- cast-subagents:end -->` block. If `AGENTS.md` already exists, everything outside that block is preserved. Re-running the installer updates the block in place.
-
-### Verifying installation
-
-Check the AGENTS.md gate block is in place:
-
-```bash
-grep -c "cast-subagents:start" "${CODEX_HOME:-$HOME/.codex}/AGENTS.md"
-```
-
-Expected output: `1`
-
-Check the skill directory exists:
-
-```bash
-ls "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/SKILL.md"
-```
-
-### Updating
-
-```bash
-npx skills add 917Dhj/cast-subagents -a codex
-CAST_SUBAGENTS_HOME="${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents"
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" --scope global
-```
-
-The gate installer is idempotent — it updates the block in place.
-
-### Uninstalling
-
-Remove the AGENTS gate block:
-
-```bash
-python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global --remove
-```
-
-Remove the skill directory:
-
-```bash
-rm -rf "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents"
-```
 
 ## 🎯 Decision Rules
 
@@ -419,21 +332,9 @@ cast-subagents/
 
 The `references/` directory is where substantive changes go. The `SKILL.md` loads these references at runtime, so you can tune decision rules, lineup tables, and wording without touching the skill logic itself.
 
----
-
-## 🛣 Roadmap
-
-The following are directions under consideration. Nothing here is committed.
-
-- May expand the task shape library to cover more mixed-mode patterns, especially investigation-before-refactor flows.
-- Could add explicit support for additional prompt languages beyond Chinese and English.
-- Considering a configurable "default silent" mode for users who prefer to opt in per-task rather than receiving automatic suggestions.
-- May expose role availability as a configuration option so teams can restrict lineups to the roles they actually have deployed.
-- Could add automated eval tooling to help contributors verify that new decision rules don't break existing silent cases.
-
 ## 🙏 Acknowledgments
 
-The always-on gate pattern and two-skill architecture in this project were inspired by [obra/superpowers](https://github.com/obra/superpowers). The idea of using a session-bootstrap mechanism to ensure a gate runs before every task came directly from studying that project.
+The always-on gate pattern and session-bootstrap approach in this project were inspired by [obra/superpowers](https://github.com/obra/superpowers). The idea of using a session-bootstrap mechanism to ensure a gate runs before every task came directly from studying that project.
 
 The role names and lineup categories are designed to be compatible with [VoltAgent/awesome-codex-subagents](https://github.com/VoltAgent/awesome-codex-subagents) so users with that collection installed can use cast-subagents out of the box.
 
