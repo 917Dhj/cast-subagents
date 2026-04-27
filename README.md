@@ -36,8 +36,8 @@ before you decide?
 
 > yes
 
-Understood. Delegating now to reviewer, code-mapper, and docs-researcher.
-Each agent will report back independently before any changes are made.
+Approval received. Codex will now delegate to reviewer, code-mapper,
+and docs-researcher. Each agent reports back independently.
 ```
 
 Here's an example where the task splits along two distinct lines:
@@ -157,24 +157,29 @@ Fetch and follow instructions from https://raw.githubusercontent.com/917Dhj/cast
 
 Codex will install the skill with `npx skills add`, install the AGENTS gate, and optionally install the bundled agent roles — then tell you to restart.
 
+By default, the AGENTS gate is installed globally so cast-subagents can advise Codex across all workspaces. If `npx` has trouble, the install guide includes a Codex skill-installer fallback.
+
 ### Manual install
 
 **1. Install the skill for Codex with npx Skills:**
 
 ```bash
 npx skills add 917Dhj/cast-subagents -a codex
+CAST_SUBAGENTS_HOME="${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents"
 ```
 
-If the command opens an interactive prompt, choose Codex as the target agent.
+If the command opens an interactive prompt, choose Codex as the target agent and confirm the install. If `npx` fails, use the fallback flow in `.codex/INSTALL.md`.
 
 **2. Install the AGENTS advisory gate:**
 
-```bash
-# Global — applies to all Codex workspaces (recommended)
-python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global
+Global install is the default and recommended setup. Use project-only only when you explicitly want cast-subagents enabled for one repository.
 
-# Project-only
-python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agents-gate.py" \
+```bash
+# Global — default; applies to all Codex workspaces
+python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" --scope global
+
+# Project-only — opt in for one repository
+python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" \
   --scope project \
   --path /path/to/repo
 ```
@@ -183,10 +188,10 @@ python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-age
 
 ```bash
 # Global
-python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agent-roles.py" --scope global
+python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" --scope global
 
 # Project-only
-python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agent-roles.py" \
+python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" \
   --scope project \
   --path /path/to/repo
 ```
@@ -197,28 +202,61 @@ Without the bundled roles, cast-subagents still works — it will suggest lineup
 
 ### AGENTS gate options
 
+These commands expect `CAST_SUBAGENTS_HOME` to point at the installed skill directory. The default `npx` install uses `${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents`; the fallback flow in `.codex/INSTALL.md` uses `${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents`.
+
 Preview without writing:
 
 ```bash
-python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global --dry-run
+python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" --scope global --dry-run
 ```
 
 Remove the gate block:
 
 ```bash
-python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global --remove
+python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" --scope global --remove
 ```
 
 The installer manages only the `<!-- cast-subagents:start -->` ... `<!-- cast-subagents:end -->` block. If `AGENTS.md` already exists, everything outside that block is preserved. Re-running the installer updates the block in place.
+
+### Verifying installation
+
+Check the AGENTS.md gate block is in place:
+
+```bash
+grep -c "cast-subagents:start" "${CODEX_HOME:-$HOME/.codex}/AGENTS.md"
+```
+
+Expected output: `1`
+
+Check the skill directory exists:
+
+```bash
+ls "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/SKILL.md"
+```
 
 ### Updating
 
 ```bash
 npx skills add 917Dhj/cast-subagents -a codex
-python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global
+CAST_SUBAGENTS_HOME="${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents"
+python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" --scope global
 ```
 
 The gate installer is idempotent — it updates the block in place.
+
+### Uninstalling
+
+Remove the AGENTS gate block:
+
+```bash
+python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-agents-gate.py" --scope global --remove
+```
+
+Remove the skill directory:
+
+```bash
+rm -rf "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents"
+```
 
 ## 🎯 Decision Rules
 
@@ -392,6 +430,12 @@ The following are directions under consideration. Nothing here is committed.
 - Considering a configurable "default silent" mode for users who prefer to opt in per-task rather than receiving automatic suggestions.
 - May expose role availability as a configuration option so teams can restrict lineups to the roles they actually have deployed.
 - Could add automated eval tooling to help contributors verify that new decision rules don't break existing silent cases.
+
+## 🙏 Acknowledgments
+
+The always-on gate pattern and two-skill architecture in this project were inspired by [obra/superpowers](https://github.com/obra/superpowers). The idea of using a session-bootstrap mechanism to ensure a gate runs before every task came directly from studying that project.
+
+The role names and lineup categories are designed to be compatible with [VoltAgent/awesome-codex-subagents](https://github.com/VoltAgent/awesome-codex-subagents) so users with that collection installed can use cast-subagents out of the box.
 
 ## 🤝 Contributing & License
 

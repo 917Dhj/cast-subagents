@@ -35,8 +35,8 @@ code-mapper 负责受影响的代码路径，docs-researcher 负责 diff 中的 
 
 > yes
 
-明白。现在委托给 reviewer、code-mapper 和 docs-researcher。
-每个代理会独立汇报结果，不会做任何修改。
+收到批准。Codex 将委托给 reviewer、code-mapper 和 docs-researcher。
+每个代理会独立汇报结果。
 ```
 
 下面是一个任务沿着两条不同线索拆分的例子：
@@ -357,7 +357,7 @@ rm -rf "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents"
 
 可以。`references/decision-rules.md` 是任务形态分类的权威来源。`references/role-lineups.md` 控制阵容推荐。两者都是纯 Markdown 表格——直接编辑它们来添加、删除或调整规则。无需学习配置语言。
 
-## <h1 align="center">Cast-Subagents</h1>
+## 🗂 项目结构
 
 ```text
 cast-subagents/
@@ -409,6 +409,12 @@ cast-subagents/
 - 考虑为偏好按任务选择加入而非接收自动建议的用户提供可配置的"默认静默"模式。
 - 可能将角色可用性暴露为配置选项，使团队可以将阵容限制为他们实际部署的角色。
 - 可能添加自动评估工具，帮助贡献者验证新的决策规则不会破坏现有的静默用例。
+
+## 🙏 致谢
+
+本项目的"始终在线门控"模式与"双 skill 架构"参考自 [obra/superpowers](https://github.com/obra/superpowers)。"通过 session bootstrap 机制确保门控在每个任务前运行"这一思路直接来自对该项目的学习。
+
+角色名称和阵容分类的设计与 [VoltAgent/awesome-codex-subagents](https://github.com/VoltAgent/awesome-codex-subagents) 兼容，已安装该集合的用户可以开箱即用。
 
 ## 🤝 贡献与许可
 
