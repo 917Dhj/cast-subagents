@@ -22,7 +22,8 @@ Desktop.ini
 
 # Codex/agent local working state
 .agent-work/
-.codex/
+.codex/*
+!.codex/INSTALL.md
 OPEN_SOURCE_CODEX_PLUGIN_GUIDE.zh.md
 
 # Python caches
