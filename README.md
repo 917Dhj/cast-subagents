@@ -1,7 +1,7 @@
 <h1 align="center">Cast-Subagents</h1>
 
 <p align="center">
-  A Codex skill that recommends the right subagent lineup for complex tasks — and waits for your approval before anything runs.
+  <b>A Codex skill that recommends the right subagent lineup for complex tasks — and waits for your approval before anything runs.</b>
 </p>
 <p align="center">
   <a href="README.md">English</a> | <a href="README.zh.md">中文</a>

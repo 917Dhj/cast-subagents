@@ -1,11 +1,12 @@
 <h1 align="center">Cast-Subagents</h1>
 
 <p align="center">
-    一个 Codex 技能，能在复杂任务来临时自动推荐最合适的子代理阵容——并在任何操作执行之前，等待你的批准。
+    <b>一个 Codex 技能，能在复杂任务来临时自动推荐最合适的子代理阵容——并在任何操作执行之前，等待你的批准。</b>
 </p>
 <p align="center">
   <a href="README.md">English</a> | <a href="README.zh.md">中文</a>
 </p>
+
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
