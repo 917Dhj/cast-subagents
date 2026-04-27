@@ -1,10 +1,13 @@
-<p align="right">
+# cast-subagents
+
+<p align="center">
   <a href="README.md">English</a> | <a href="README.zh.md">中文</a>
 </p>
 
-# cast-subagents
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Codex Compatible](https://img.shields.io/badge/Codex-compatible-green.svg)](https://github.com/917Dhj/cast-subagents)
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
+  <a href="https://github.com/917Dhj/cast-subagents"><img src="https://img.shields.io/badge/Codex-compatible-green.svg" alt="Codex Compatible"></a>
+</p>
 
 一个 Codex 技能，能在复杂任务来临时自动推荐最合适的子代理阵容——并在任何操作执行之前，等待你的批准。
 
