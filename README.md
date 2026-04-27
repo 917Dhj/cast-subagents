@@ -1,6 +1,9 @@
 <h1 align="center">cast-subagents</h1>
 
 <p align="center">
+  A Codex skill that recommends the right subagent lineup for complex tasks — and waits for your approval before anything runs.
+</p>
+<p align="center">
   <a href="README.md">English</a> | <a href="README.zh.md">中文</a>
 </p>
 
@@ -9,10 +12,9 @@
   <a href="https://github.com/917Dhj/cast-subagents"><img src="https://img.shields.io/badge/Codex-compatible-green.svg" alt="Codex Compatible"></a>
 </p>
 
-A Codex skill that recommends the right subagent lineup for complex tasks — and waits for your approval before anything runs.
-
----
-
+<p align="center">
+  <img src="assets/cast-subagents-hero.png" alt="Cast Subagents hero banner">
+</p>
 Every time a Codex task is large enough to benefit from parallel agents, you face the same overhead: decide whether to split it, figure out which roles to send, write the spawn instructions clearly enough that Codex actually follows through. cast-subagents handles that analysis automatically — it classifies the task, picks a lineup, and surfaces the suggestion before work begins. What it never does is spawn on its own. The approval step is not optional.
 
 ## 💬 See It In Action

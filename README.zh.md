@@ -1,6 +1,9 @@
 <h1 align="center">cast-subagents</h1>
 
 <p align="center">
+    一个 Codex 技能，能在复杂任务来临时自动推荐最合适的子代理阵容——并在任何操作执行之前，等待你的批准。
+</p>
+<p align="center">
   <a href="README.md">English</a> | <a href="README.zh.md">中文</a>
 </p>
 
@@ -9,10 +12,9 @@
   <a href="https://github.com/917Dhj/cast-subagents"><img src="https://img.shields.io/badge/Codex-compatible-green.svg" alt="Codex Compatible"></a>
 </p>
 
-一个 Codex 技能，能在复杂任务来临时自动推荐最合适的子代理阵容——并在任何操作执行之前，等待你的批准。
-
----
-
+<p align="center">
+  <img src="assets/cast-subagents-hero.png" alt="Cast Subagents 主图">
+</p>
 每当 Codex 任务大到值得并行代理时，你都会面临同样的额外操作：判断是否要拆分、选择哪些角色、写好委托指令，还要确保 Codex 真的会执行。cast-subagents 自动完成这些分析——它分类任务、挑选阵容、给出建议——然后在工作开始前停下来。批准步骤不是可选项。
 
 ## 💬 效果预览
