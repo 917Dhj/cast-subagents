@@ -1,3 +1,7 @@
+<p align="right">
+  <a href="README.md">English</a> | <a href="README.zh.md">中文</a>
+</p>
+
 # cast-subagents
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Codex Compatible](https://img.shields.io/badge/Codex-compatible-green.svg)](https://github.com/917Dhj/cast-subagents)
