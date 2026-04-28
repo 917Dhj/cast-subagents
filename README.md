@@ -338,7 +338,7 @@ The `references/` directory is where substantive changes go. The `SKILL.md` load
 
 The always-on gate pattern and session-bootstrap approach in this project were inspired by [obra/superpowers](https://github.com/obra/superpowers). The idea of using a session-bootstrap mechanism to ensure a gate runs before every task came directly from studying that project.
 
-The role names and lineup categories are designed to be compatible with [VoltAgent/awesome-codex-subagents](https://github.com/VoltAgent/awesome-codex-subagents) so users with that collection installed can use cast-subagents out of the box.
+The bundled role pack is a small, curated subset adapted from [VoltAgent/awesome-codex-subagents](https://github.com/VoltAgent/awesome-codex-subagents). It includes only the roles that cast-subagents commonly recommends, with light organization around this skill's decision rules rather than a full mirror of that collection.
 
 ## 🤝 Contributing & License
 
