@@ -176,6 +176,13 @@ Once the user approves delegation:
 - include an explicit delegated-subagent bypass so the child agent does not invoke cast-subagents again
 - summarize results back in the main thread instead of dumping raw logs
 
+Spawn call policy:
+- default to role-specific spawning: specify the target `agent_type`, do not set `fork_context`, and pass a self-contained handoff as the child prompt
+- treat the handoff as the context carrier; do not rely on inherited chat history for task-critical context
+- use `fork_context` only when exact conversation history matters more than role specialization
+- when using `fork_context`, do not specify `agent_type`; accept that the child inherits the parent agent type
+- if a spawn attempt fails because `fork_context` and `agent_type` were combined, retry once with the same `agent_type`, no `fork_context`, and the self-contained handoff
+
 Every handoff should include:
 - `delegation_context`
 - `goal`

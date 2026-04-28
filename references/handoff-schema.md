@@ -34,6 +34,27 @@ open_questions: whether retries or optimistic state updates affect the failure m
 
 Delegation context is the recursion guard. If a child agent receives `delegation_context: delegated-subagent`, it should execute the assigned handoff directly instead of suggesting another subagent lineup.
 
+## Spawn Context Policy
+
+Write each handoff as if the child agent starts fresh, with no useful chat history. The parent thread should put task-critical context directly in the handoff: goal, scope, file paths, URLs, IDs, constraints, deliverable, and verification method.
+
+Default spawn shape:
+
+```text
+agent_type: docs-researcher
+fork_context: false
+prompt: <structured handoff with delegation_context>
+```
+
+Avoid combining role-specific spawning with full-history fork:
+
+```text
+bad: agent_type: docs-researcher + fork_context: true
+good: agent_type: docs-researcher + delegation_context + structured handoff
+```
+
+Use `fork_context` only when exact conversation history matters more than role specialization. In that case, do not specify `agent_type`; the child inherits the parent agent type.
+
 Write-policy meanings:
 
 | Value | Meaning |
