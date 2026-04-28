@@ -78,3 +78,4 @@ Do not do these:
 - offering three equally weighted lineups with no recommendation
 - saying or implying that delegation already started
 - asking a vague approval question without showing the proposed lineup
+- suggesting another lineup when the prompt is already a delegated subagent handoff

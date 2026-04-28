@@ -1,6 +1,6 @@
 ---
 name: cast-subagents
-description: "Use when suggesting exactly one Codex subagent lineup before work begins for multi-lane tasks: branch/PR review across bugs, security, tests, maintainability, docs, or regression risk; codepath tracing plus docs/API verification; option research with tradeoff synthesis; auth/codebase mapping before risk assessment or planning. Advisory only; no auto-spawn; approval required. Do not use for trivial single-file fixes, wording-only edits, one fact lookup, unclear requests, or explicit opt-out."
+description: "Use when suggesting exactly one Codex subagent lineup before work begins for multi-lane tasks: branch/PR review across bugs, security, tests, maintainability, docs, or regression risk; codepath tracing plus docs/API verification; option research with tradeoff synthesis; auth/codebase mapping before risk assessment or planning. Advisory only; no auto-spawn; approval required. Do not use for delegated subagent handoffs, trivial single-file fixes, wording-only edits, one fact lookup, unclear requests, or explicit opt-out."
 ---
 
 # Cast Subagents
@@ -48,6 +48,7 @@ Typical request shapes:
 Do not use this skill when delegation would add overhead without increasing accuracy or speed.
 
 Hard stop cases:
+- delegated subagent handoffs where parent approval already completed
 - trivial single-domain tasks
 - tightly coupled write-heavy work in the same files
 - ambiguous requests that need clarification first
@@ -56,6 +57,8 @@ Hard stop cases:
 - explicit user opt-out from subagents
 
 Typical non-trigger cases:
+- "delegation_context: delegated-subagent"
+- "parent approval already completed; execute this handoff only"
 - "fix this one-line bug in one file"
 - "rename this variable"
 - "explain this function"
@@ -66,14 +69,15 @@ Typical non-trigger cases:
 
 Follow this sequence every time this skill is invoked:
 
-1. Classify the task shape.
-2. Check whether the work splits into independent subtasks.
-3. Check whether the task is primarily read-heavy or write-heavy.
-4. If the request is ambiguous, clarify before suggesting.
-5. Choose one recommended lineup of 1-4 roles.
-6. Determine the work mode: `read-only`, `mixed`, or `write-capable`.
-7. Produce the suggestion message using the contract below.
-8. Stop and wait for approval.
+1. If the current prompt is a delegated subagent handoff, do not suggest another lineup; execute the handoff instead.
+2. Classify the task shape.
+3. Check whether the work splits into independent subtasks.
+4. Check whether the task is primarily read-heavy or write-heavy.
+5. If the request is ambiguous, clarify before suggesting.
+6. Choose one recommended lineup of 1-4 roles.
+7. Determine the work mode: `read-only`, `mixed`, or `write-capable`.
+8. Produce the suggestion message using the contract below.
+9. Stop and wait for approval.
 
 ## Capability Selection Rules
 
@@ -169,9 +173,11 @@ Once the user approves delegation:
 - prefer read-only agents for exploration, review, and verification
 - keep write-capable agents serialized unless the write scopes are clearly disjoint
 - give each agent a bounded task and a clear deliverable
+- include an explicit delegated-subagent bypass so the child agent does not invoke cast-subagents again
 - summarize results back in the main thread instead of dumping raw logs
 
 Every handoff should include:
+- `delegation_context`
 - `goal`
 - `success_criteria`
 - `scope_in`
@@ -182,6 +188,10 @@ Every handoff should include:
 - `verification`
 - `write_policy`
 - `open_questions`
+
+Use this exact `delegation_context` value unless there is a task-specific reason to be more restrictive:
+
+`delegated-subagent; parent approval already completed; do not invoke cast-subagents or request another delegation approval; execute this handoff only`
 
 When the work is mixed:
 - front-load read-only exploration

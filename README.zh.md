@@ -103,6 +103,7 @@ AGENTS.md 门控检查任务
 你批准后，每个代理会收到结构化的委托信息，包含目标、成功标准、范围边界、相关文件路径、写入策略和可验证的交付物。以下是一个典型的委托内容：
 
 ```text
+delegation_context: delegated-subagent; parent approval already completed; do not invoke cast-subagents or request another delegation approval; execute this handoff only
 goal: Map the affected code path for the settings save failure.
 success_criteria: Identify the real execution path, likely failure boundary,
   and the files that own the behavior.
@@ -111,6 +112,7 @@ scope_out: unrelated settings pages, styling, copy updates
 relevant_paths: src/settings/, app/api/settings/, useSettingsForm
 constraints: read-only; no code edits; cite concrete files and symbols
 deliverable: concise summary with file references and one likely root cause
+verification: parent can trace the same path from your references
 write_policy: read-only
 open_questions: whether retries or optimistic updates affect the failure mode
 ```

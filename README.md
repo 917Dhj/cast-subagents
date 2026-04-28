@@ -104,6 +104,7 @@ Hard constraints: exactly one lineup, no more than four roles, no task content b
 Once you approve, each agent gets a structured handoff that includes the goal, success criteria, scope boundaries, relevant file paths, write policy, and a verifiable deliverable. Here's what a typical handoff looks like:
 
 ```text
+delegation_context: delegated-subagent; parent approval already completed; do not invoke cast-subagents or request another delegation approval; execute this handoff only
 goal: Map the affected code path for the settings save failure.
 success_criteria: Identify the real execution path, likely failure boundary,
   and the files that own the behavior.
@@ -112,6 +113,7 @@ scope_out: unrelated settings pages, styling, copy updates
 relevant_paths: src/settings/, app/api/settings/, useSettingsForm
 constraints: read-only; no code edits; cite concrete files and symbols
 deliverable: concise summary with file references and one likely root cause
+verification: parent can trace the same path from your references
 write_policy: read-only
 open_questions: whether retries or optimistic updates affect the failure mode
 ```
