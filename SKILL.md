@@ -3,6 +3,13 @@ name: cast-subagents
 description: "Use when suggesting exactly one Codex subagent lineup before work begins for multi-lane tasks: branch/PR review across bugs, security, tests, maintainability, docs, or regression risk; codepath tracing plus docs/API verification; option research with tradeoff synthesis; auth/codebase mapping before risk assessment or planning. Advisory only; no auto-spawn; approval required. Do not use for delegated subagent handoffs, trivial single-file fixes, wording-only edits, one fact lookup, unclear requests, or explicit opt-out."
 ---
 
+<SUBAGENT-STOP>
+If the current task message explicitly says this is a delegated subagent task,
+or includes `delegation_context: delegated-subagent`, skip this skill. Do not
+suggest another lineup or ask for delegation approval. Execute only the assigned
+handoff within its constraints.
+</SUBAGENT-STOP>
+
 # Cast Subagents
 
 ## Mission
@@ -48,7 +55,8 @@ Typical request shapes:
 Do not use this skill when delegation would add overhead without increasing accuracy or speed.
 
 Hard stop cases:
-- delegated subagent handoffs where parent approval already completed
+- current task messages that explicitly say this is a delegated subagent task
+- handoffs with `delegation_context: delegated-subagent`
 - trivial single-domain tasks
 - tightly coupled write-heavy work in the same files
 - ambiguous requests that need clarification first
@@ -69,7 +77,7 @@ Typical non-trigger cases:
 
 Follow this sequence every time this skill is invoked:
 
-1. If the current prompt is a delegated subagent handoff, do not suggest another lineup; execute the handoff instead.
+1. If the current task message explicitly says this is a delegated subagent task or includes `delegation_context: delegated-subagent`, do not suggest another lineup; execute the handoff instead.
 2. Classify the task shape.
 3. Check whether the work splits into independent subtasks.
 4. Check whether the task is primarily read-heavy or write-heavy.

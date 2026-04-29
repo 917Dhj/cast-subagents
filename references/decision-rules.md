@@ -15,7 +15,7 @@ Use this table to decide whether a task should trigger a subagent suggestion.
 | Ambiguous request | unclear objective or missing success criteria | No | none | Clarify first. |
 | Immediate critical-path fact lookup | one answer blocks everything else | No | none | Get the answer first, then reassess. |
 | Explicit user opt-out | user says not to use subagents | No | none | Treat as a hard constraint. |
-| Delegated subagent handoff | `delegation_context: delegated-subagent` or parent approval already completed | No | none | Execute the assigned handoff instead of recursing into advisory mode. |
+| Delegated subagent handoff | current task message explicitly says this is a delegated subagent task or includes `delegation_context: delegated-subagent` | No | none | Execute the assigned handoff instead of recursing into advisory mode. |
 | Style-only wording tweak | no specialist view or parallel lane is needed | No | none | Stay in the main thread. |
 
 Practical tie-breakers:

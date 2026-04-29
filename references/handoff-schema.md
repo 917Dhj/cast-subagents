@@ -32,7 +32,7 @@ write_policy: read-only
 open_questions: whether retries or optimistic state updates affect the failure mode
 ```
 
-Delegation context is the recursion guard. If a child agent receives `delegation_context: delegated-subagent`, it should execute the assigned handoff directly instead of suggesting another subagent lineup.
+Delegation context is the recursion guard. A child agent should bypass cast-subagents only when the current task message explicitly says this is a delegated subagent task or includes `delegation_context: delegated-subagent`; then it should execute the assigned handoff directly instead of suggesting another subagent lineup.
 
 ## Spawn Context Policy
 

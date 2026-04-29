@@ -17,7 +17,7 @@ GATE_BLOCK = f"""{START_MARKER}
 
 This gate applies only to the main/frontline Codex agent before starting a user-level task.
 
-If you are already running as a delegated subagent, or if the current prompt is a structured handoff from a parent agent, do not invoke `$cast-subagents`, do not suggest another lineup, and do not wait for delegation approval. Treat `delegation_context: delegated-subagent` as an explicit bypass signal: parent approval already completed, so execute the assigned handoff within its constraints.
+If the current task message explicitly says this is a delegated subagent task, or includes `delegation_context: delegated-subagent`, do not invoke `$cast-subagents`, do not suggest another lineup, and do not wait for delegation approval. Parent approval has already completed; execute only the assigned handoff within its constraints.
 
 Before starting any non-trivial coding, review, research, planning, codebase-mapping, docs/API-verification, or regression-risk task, check whether it matches the cast-subagents trigger patterns.
 
