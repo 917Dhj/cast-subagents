@@ -129,7 +129,7 @@ open_questions: whether retries or optimistic updates affect the failure mode
 Fetch and follow instructions from https://raw.githubusercontent.com/917Dhj/cast-subagents/refs/heads/main/.codex/INSTALL.md
 ```
 
-Codex 会用 `npx skills add` 安装技能、安装 AGENTS 门控，并可选择安装捆绑的代理角色——然后提示你重启。
+Codex 会用 `npx skills add` 安装技能、安装 AGENTS 门控，根据你当前的环境建议是否安装捆绑代理角色，然后提示你重启。
 
 ### 手动安装
 
@@ -153,7 +153,7 @@ python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-age
   --path /path/to/repo
 ```
 
-**3.（可选）安装捆绑的代理角色** — 将 7 个专业角色定义复制到你的 Codex 代理目录：
+**3. 建议安装捆绑的代理角色** — 将 7 个专业角色定义复制到你的 Codex 代理目录：
 
 ```bash
 # 全局安装
@@ -165,7 +165,7 @@ python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-age
   --path /path/to/repo
 ```
 
-不安装捆绑角色也没问题——cast-subagents 会使用 Codex 环境中已有的角色来推荐阵容。
+全新的 Codex 环境建议安装这些角色，这样 cast-subagents 会有一套稳定的基础阵容。如果你已经有成熟的代理角色集合，可以跳过这一步、只安装选定角色，或直接运行脚本让它保留已有同名角色。没有捆绑角色时，cast-subagents 仍会使用当前环境里可用的角色，并在首选角色缺失时降级。
 
 **4. 重启 Codex**，使技能和 AGENTS 规则生效。
 

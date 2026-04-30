@@ -45,7 +45,14 @@ python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" \
   --path /path/to/repo
 ```
 
-**3. (Optional) Install bundled agent roles** — copies 7 specialized role definitions to your Codex agents directory:
+**3. Recommended: install bundled agent roles** — strongly recommended when the user's Codex environment has few or no existing agent roles.
+
+Before deciding, inspect the user's available roles:
+
+- Global roles: `${CODEX_HOME:-$HOME/.codex}/agents/*.toml`
+- Project roles, when installing for a specific repository: `/path/to/repo/.codex/agents/*.toml`
+
+If those directories are empty or sparse, recommend installing all 7 bundled roles so cast-subagents has a reliable baseline lineup. If the user already has a mature agent role collection, they can skip this step, install only missing bundled roles, or run the installer without `--overwrite` so existing same-name roles are preserved.
 
 Global:
 
@@ -61,7 +68,17 @@ python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" \
   --path /path/to/repo
 ```
 
-Without the bundled roles, cast-subagents still works — it will suggest lineups using whatever roles are already available in the Codex environment.
+Install selected roles only:
+
+```bash
+python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" --scope global \
+  --role reviewer \
+  --role code-mapper
+```
+
+Only use `--overwrite` when the user explicitly wants to replace existing same-name roles with the bundled versions from this repository.
+
+If the user skips the bundled roles, cast-subagents can still suggest lineups using whatever roles are already available in the Codex environment, but it may degrade when preferred roles are missing.
 
 **4. Tell the user to restart Codex** so the skill and AGENTS rules are loaded.
 

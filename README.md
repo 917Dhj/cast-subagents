@@ -130,7 +130,7 @@ Tell Codex:
 Fetch and follow instructions from https://raw.githubusercontent.com/917Dhj/cast-subagents/refs/heads/main/.codex/INSTALL.md
 ```
 
-Codex will install the skill with `npx skills add`, install the AGENTS gate, and optionally install the bundled agent roles — then tell you to restart.
+Codex will install the skill with `npx skills add`, install the AGENTS gate, recommend bundled agent roles based on your current setup, and then tell you to restart.
 
 By default, the AGENTS gate is installed globally so cast-subagents can advise Codex across all workspaces. If `npx` has trouble, the install guide includes a Codex skill-installer fallback.
 
@@ -159,7 +159,7 @@ python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" \
   --path /path/to/repo
 ```
 
-**3. (Optional) Install bundled agent roles:**
+**3. Recommended: install bundled agent roles:**
 
 ```bash
 # Global
@@ -171,7 +171,7 @@ python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" \
   --path /path/to/repo
 ```
 
-Without the bundled roles, cast-subagents still works — it will suggest lineups using whatever roles are already available in your Codex environment.
+Clean Codex setups should install these roles so cast-subagents has a reliable baseline lineup. If you already have a mature agent role collection, you can skip this step, install only selected roles, or run the installer as-is so existing same-name roles are preserved. cast-subagents still works without the bundled roles; it will use whatever roles are available and degrade when preferred roles are missing.
 
 **4. Restart Codex** so the skill and AGENTS rules are loaded.
 
