@@ -128,7 +128,7 @@ open_questions: whether retries or optimistic updates affect the failure mode
 告诉 Codex：
 
 ```
-Fetch and follow instructions from https://raw.githubusercontent.com/917Dhj/cast-subagents/refs/heads/main/.codex/INSTALL.md
+请获取并按照这个安装说明执行：https://raw.githubusercontent.com/917Dhj/cast-subagents/refs/heads/main/.codex/INSTALL.md
 ```
 
 Codex 会用 `npx skills add` 安装技能、安装 AGENTS 门控，根据你当前的环境建议是否安装捆绑代理角色，然后提示你重启。
