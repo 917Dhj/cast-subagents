@@ -22,6 +22,8 @@
 </p>
 这种沉默是有代价的。每当一个任务天然地可以拆成多条独立线索——多维度的 PR 审查、代码路径加文档验证、有多条并行线程的选项调研——Codex 默认只会待在主线程里。你得自己察觉这个机会，自己决定派哪些角色，还得把委托请求写得足够清楚，Codex 才会执行。Cast-Subagents 做的就是这第一步识别：它发现那些适合委托的任务形态，在工作开始之前把阵容建议摆到你面前。
 
+它不仅判断任务是否适合拆分，还会根据任务信号推荐合适的专业角色阵容，例如代码路径追踪、PR 审查、文档核验、安全审计、测试策略、回归测试、Web 性能审计和发布前质量门。
+
 ## 💬 效果预览
 
 cast-subagents 识别任务形态、命名阵容和工作模式、提出一个直接的问题，然后停止。在你同意之前，它不会触碰任务本身。
@@ -153,7 +155,7 @@ python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-age
   --path /path/to/repo
 ```
 
-**3. 建议安装捆绑的代理角色** — 将 7 个专业角色定义复制到你的 Codex 代理目录：
+**3. 建议安装捆绑的代理角色** — 将 10 个专业角色定义复制到你的 Codex 代理目录：
 
 ```bash
 # 全局安装
@@ -173,25 +175,51 @@ python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-age
 
 ### 触发条件
 
-- **跨越多领域的编排任务** — 任务涉及分离的关注点，可以并行探索或处理。
+cast-subagents 会看两类信号：核心委托信号，说明任务可以拆成独立线索；专业角色信号，说明某个具体风险需要专门角色处理。
 
-  > `Review this PR for correctness issues and verify that the API docs match
-  >    the new endpoint behavior.`
+**核心委托信号**
 
-- **需要外部知识或验证的代码分析** — 部分工作是对代码库内部的追踪，部分需要查阅框架文档或类似的外部参考。
+- **多维度审查** — 同一个 diff 或分支需要从多个独立角度审查。
 
-  > `Find the bug in the retry logic and check the Stripe docs for the correct
-  >    idempotency key behavior.`
+  > `Review this branch against main for bugs, security issues, missing tests, and maintainability risks.`
 
-- **需要并行研究来缩小范围** — 不确定问题在哪里，同时定位多条线索更快。
+- **以读取为主的代码路径追踪** — 修改前需要先摸清多个路径或层级。
 
-  > `Figure out why the staging deploy is failing — could be a config change,
-  >    a missing migration, or a DNS issue.`
+  > `Map the auth flow first, then tell me whether the current implementation is safe to change.`
 
-- **带有可分离子任务的宏观规划** — 任务是一个高层目标，包含清晰独立的调查路线。
+- **代码路径加文档/API 核验** — 同时需要代码追踪和文档确认，且两条线索可以并行。
 
-  > `Map the relevant module boundaries first, then decide how to approach
-  >    the change.`
+  > `先帮我查清楚代码路径，再去核对官方文档里这个 API 的行为。`
+
+- **可并行的资料研究** — 任务包含彼此不阻塞的独立问题。
+
+  > `Research three approaches for background job retries and summarize the tradeoffs before we choose one.`
+
+- **带有可分离子任务的宏观规划** — 任务是高层目标，包含清晰独立的调查路线。
+
+  > `Map the relevant module boundaries first, then decide how to approach the change.`
+
+**专业角色信号**
+
+- **安全边界** — 认证、授权、密钥、用户输入、webhook、依赖或 LLM/tool 权限风险是任务核心。
+
+  > `Review this auth refactor for permission bypasses, token handling issues, and missing server-side checks.`
+
+- **测试策略或有界回归测试** — 任务询问缺哪些测试、如何证明 bug 修复，或如何添加有边界的回归覆盖。
+
+  > `Look at the checkout flow and tell me what tests are missing before we change anything.`
+
+- **Web 性能** — 任务涉及前端路由、Core Web Vitals、Lighthouse、LCP、INP、CLS、加载、渲染或网络行为。
+
+  > `Audit the Next.js landing page for LCP, INP, CLS, image loading, and unnecessary client-side rendering.`
+
+- **发布前质量门** — 任务要求从代码质量、测试、安全和风险角度判断是否可发布。
+
+  > `Before we ship this branch, check code quality, security risk, and missing tests.`
+
+- **LLM 或 agent tool 安全** — 任务涉及 prompt injection、工具权限、上下文密钥、子代理委托或破坏性工具调用。
+
+  > `Check whether this agent tool integration can leak secrets or let a subagent perform destructive actions without approval.`
 
 ### 保持安静的情况
 
@@ -221,20 +249,34 @@ python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-age
 
 `agents/categories/` 目录中包含十个专业角色：
 
+**核心调查**
+
 | 角色 | 功能 |
 |---|---|
 | `code-mapper` | 追踪代码执行路径，定位文件归属关系 |
+| `search-specialist` | 在代码或外部资源中快速收集高信号证据 |
+| `docs-researcher` | 验证 API 保证和文档假设 |
+
+**质量专项角色**
+
+| 角色 | 功能 |
+|---|---|
 | `reviewer` | 以 Staff Engineer 风格审查正确性、契约、回归和可维护性风险 |
 | `security-auditor` | 审查信任边界、认证、授权、密钥、用户输入、依赖和 LLM/tool 权限风险 |
 | `test-engineer` | 只读分析测试策略、覆盖缺口、测试层级和 Prove-It 回归测试计划 |
 | `test-automator` | 在范围清楚后添加有针对性的自动化回归测试 |
-| `docs-researcher` | 验证 API 保证和文档假设 |
-| `search-specialist` | 在代码或外部资源中快速收集高信号证据 |
-| `knowledge-synthesizer` | 将研究结果整合为简洁、可操作的总结 |
-| `task-distributor` | 将宏观目标拆分为有边界、独立的子任务 |
 | `web-performance-auditor` | 审计 Web 性能、Core Web Vitals、加载、渲染和网络风险，不伪造指标 |
 
+**规划与综合**
+
+| 角色 | 功能 |
+|---|---|
+| `knowledge-synthesizer` | 将研究结果整合为简洁、可操作的总结 |
+| `task-distributor` | 将宏观目标拆分为有边界、独立的子任务 |
+
 该技能先选择所需能力，然后映射到 Codex 环境中实际可用的角色。如果首选角色缺失，技能会明确说明，而非悄悄替换。
+
+专业角色不是用来凑阵容的。只有当任务中出现清晰、独立的安全、测试、性能或发布风险信号时，cast-subagents 才会把对应角色加入阵容。
 
 ### 常见阵容
 
@@ -249,6 +291,15 @@ python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-age
 | 代码路径加文档/API 验证 | `code-mapper + docs-researcher` | `read-only` |
 | 方案研究与权衡综合 | `search-specialist + knowledge-synthesizer` | `read-only` |
 
+专项示例：
+
+| 任务形态 | 推荐阵容 | 工作模式 |
+|---|---|---|
+| 认证 / 权限 / token 流程审查 | `security-auditor + code-mapper` | `read-only` |
+| LLM / agent tool 安全审查 | `security-auditor + code-mapper + docs-researcher` | `read-only` |
+| 带指标材料的 Web 性能审计 | `web-performance-auditor` | `read-only` |
+| 有针对性的回归测试 | `test-engineer + test-automator + code-mapper` | `mixed` |
+
 上限是四个角色。如果一个任务看起来需要更多角色，cast-subagents 要么压缩阵容，要么保持安静，而不是将其充数。
 
 这些角色名称与 VoltAgent/awesome-codex-subagents 及类似社区 Codex 子代理集合兼容。如果你使用自定义角色集，可以修改 `references/role-lineups.md` 来添加自己的任务形态映射。
@@ -259,7 +310,7 @@ python3 "${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents/scripts/install-age
 
 **`mixed`**（混合）— 代理以只读方式开始，在写入前暂停。技能会在确认探索阶段完成后，才将任务移交给有写入权限的代理。当你在建议中看到 `mixed` 时，意思是："我们先深入探索，在修改任何内容之前我会跟你确认。"
 
-**`write-capable`**（可写入）— 代理可以在分配的范围内编辑文件。cast-subagents 会明确标记此模式，并在权衡值得说明时，提供以只读模式开始的选项。任何包含 `test-automator` 的阵容默认使用此模式。
+**`write-capable`**（可写入）— 代理可以在分配的范围内编辑文件。cast-subagents 只在明确需要可写工作的场景使用它。测试写入任务通常先从 `mixed` 开始：由 `test-engineer` 和 `code-mapper` 明确行为边界，再由 `test-automator` 在范围清楚后添加有针对性的测试。
 
 模式始终以这三个确切标签之一声明——你不会在不知道工作模式的情况下看到建议。
 
@@ -313,7 +364,10 @@ cast-subagents/
 │       │   └── task-distributor.toml
 │       └── 04-quality/
 │           ├── reviewer.toml
-│           └── test-automator.toml
+│           ├── security-auditor.toml
+│           ├── test-engineer.toml
+│           ├── test-automator.toml
+│           └── web-performance-auditor.toml
 ├── references/
 │   ├── decision-rules.md         # 任务形态 → 建议/静默 映射
 │   ├── role-lineups.md           # 任务形态 → 阵容推荐

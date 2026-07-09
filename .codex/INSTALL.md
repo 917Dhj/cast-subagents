@@ -52,7 +52,9 @@ Before deciding, inspect the user's available roles:
 - Global roles: `${CODEX_HOME:-$HOME/.codex}/agents/*.toml`
 - Project roles, when installing for a specific repository: `/path/to/repo/.codex/agents/*.toml`
 
-If those directories are empty or sparse, recommend installing all 7 bundled roles so cast-subagents has a reliable baseline lineup. If the user already has a mature agent role collection, they can skip this step, install only missing bundled roles, or run the installer without `--overwrite` so existing same-name roles are preserved.
+If those directories are empty or sparse, recommend installing all 10 bundled roles so cast-subagents has a reliable baseline lineup. If the user already has a mature agent role collection, they can skip this step, install only missing bundled roles, or run the installer without `--overwrite` so existing same-name roles are preserved.
+
+The bundled pack includes core investigation roles plus specialist roles such as `security-auditor`, `test-engineer`, `test-automator`, and `web-performance-auditor`.
 
 Global:
 

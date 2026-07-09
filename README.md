@@ -23,6 +23,8 @@
 </p>
 That silence has a cost. Every time a task splits cleanly across multiple lanes — a multi-axis PR review, a codepath-plus-docs verification, an option research with parallel threads — Codex stays in the main thread by default. The user has to notice the opportunity, decide which roles to spawn, and phrase the request clearly enough that Codex follows through. Cast-Subagents handles that recognition step: it spots the task shapes that benefit from delegation and surfaces a lineup suggestion before work begins.
 
+It now recommends specialist lineups for code mapping, review, docs verification, security auditing, test strategy, targeted test automation, Web performance, and pre-ship quality gates.
+
 ## 💬 See It In Action
 
 cast-subagents identifies the task shape, names the lineup and work mode, asks one direct question, then stops. It does not touch the task itself until you say go.
@@ -179,6 +181,10 @@ Clean Codex setups should install these roles so cast-subagents has a reliable b
 
 ### When cast-subagents speaks up
 
+cast-subagents looks for two kinds of signals: core delegation signals, where work splits into independent lanes, and specialist signals, where a concrete risk calls for a focused role.
+
+**Core delegation signals**
+
 - **Multi-axis review** — the task asks for several independent review angles on the same diff or branch.
 
   > `Review this branch against main for bugs, security issues, missing tests, and maintainability risks.`
@@ -198,6 +204,28 @@ Clean Codex setups should install these roles so cast-subagents has a reliable b
 - **Broad planning with separable subtasks** — the task is a high-level goal with clearly independent investigation lanes.
 
   > `Map the relevant module boundaries first, then decide how to approach the change.`
+
+**Specialist signals**
+
+- **Security boundary** — auth, authorization, secrets, user input, webhooks, dependencies, or exploitable LLM/tool permissions are central to the task.
+
+  > `Review this auth refactor for permission bypasses, token handling issues, and missing server-side checks.`
+
+- **Test strategy or targeted regression tests** — the task asks which tests are missing, how to prove a bug fix, or how to add bounded regression coverage.
+
+  > `Look at the checkout flow and tell me what tests are missing before we change anything.`
+
+- **Web performance** — the task names frontend routes, Core Web Vitals, Lighthouse, LCP, INP, CLS, loading, rendering, or network behavior.
+
+  > `Audit the Next.js landing page for LCP, INP, CLS, image loading, and unnecessary client-side rendering.`
+
+- **Pre-ship quality gate** — the task asks for release readiness across code quality, tests, security, and risk.
+
+  > `Before we ship this branch, check code quality, security risk, and missing tests.`
+
+- **LLM or agent tool safety** — the task involves prompt injection, tool permissions, secrets in context, delegated agents, or destructive tool use.
+
+  > `Check whether this agent tool integration can leak secrets or let a subagent perform destructive actions without approval.`
 
 ### When it stays quiet
 
@@ -227,20 +255,34 @@ The Chinese examples above are included intentionally. cast-subagents matches th
 
 Ten specialized roles are included in the `agents/categories/` directory:
 
+**Core investigation**
+
 | Role | What it does |
 |---|---|
 | `code-mapper` | Traces execution paths and maps file ownership across the codebase |
+| `search-specialist` | Gathers high-signal evidence quickly across code or external sources |
+| `docs-researcher` | Verifies API guarantees and documentation assumptions |
+
+**Quality specialists**
+
+| Role | What it does |
+|---|---|
 | `reviewer` | Performs Staff Engineer-style code review across correctness, contracts, regressions, and maintainability |
 | `security-auditor` | Reviews trust boundaries, auth, authorization, secrets, user input, dependencies, and LLM/tool permission risks |
 | `test-engineer` | Analyzes test strategy, coverage gaps, test levels, and Prove-It regression plans without editing files |
 | `test-automator` | Adds targeted automated regression coverage after scope is clear |
-| `docs-researcher` | Verifies API guarantees and documentation assumptions |
-| `search-specialist` | Gathers high-signal evidence quickly across code or external sources |
-| `knowledge-synthesizer` | Consolidates research findings into a concise, actionable summary |
-| `task-distributor` | Structures a broad goal into bounded, independent subtasks |
 | `web-performance-auditor` | Audits Web performance, Core Web Vitals, loading, rendering, and network risks without fabricating metrics |
 
+**Planning and synthesis**
+
+| Role | What it does |
+|---|---|
+| `knowledge-synthesizer` | Consolidates research findings into a concise, actionable summary |
+| `task-distributor` | Structures a broad goal into bounded, independent subtasks |
+
 The skill selects capabilities first, then maps them to the roles that are actually available in your Codex environment. If a preferred role is missing, the skill says so explicitly rather than silently substituting.
+
+Specialist roles are not decorative. cast-subagents adds them only when the task contains a concrete independent security, test, performance, or release-risk signal.
 
 ### Common lineups
 
@@ -255,6 +297,15 @@ The skill selects capabilities first, then maps them to the roles that are actua
 | Codepath plus docs/API verification | `code-mapper + docs-researcher` | `read-only` |
 | Option research and tradeoff synthesis | `search-specialist + knowledge-synthesizer` | `read-only` |
 
+Specialist examples:
+
+| Task shape | Recommended lineup | Work mode |
+|---|---|---|
+| Auth / permission / token flow review | `security-auditor + code-mapper` | `read-only` |
+| LLM / agent tool safety review | `security-auditor + code-mapper + docs-researcher` | `read-only` |
+| Web performance audit with supplied metrics | `web-performance-auditor` | `read-only` |
+| Targeted regression tests | `test-engineer + test-automator + code-mapper` | `mixed` |
+
 The cap is four roles. If a task seems to need more, cast-subagents either compresses the lineup or stays silent rather than padding it out.
 
 These role names are compatible with VoltAgent/awesome-codex-subagents and similar community Codex subagent collections. If you use a custom role set, you can adapt `references/role-lineups.md` to add your own task shape mappings.
@@ -265,7 +316,7 @@ These role names are compatible with VoltAgent/awesome-codex-subagents and simil
 
 **`mixed`** — agents start with a read-only pass and pause before any writes. The skill confirms the exploration phase is complete before handing off to a write-capable agent. When you see `mixed` in a suggestion, it means: "we'll dig in first, and I'll check with you before anything changes."
 
-**`write-capable`** — agents may edit files within their assigned scope. cast-subagents flags this mode explicitly and, where the tradeoff is worth surfacing, offers to start in read-only mode instead. Any lineup that includes `test-automator` uses this mode by default.
+**`write-capable`** — agents may edit files within their assigned scope. cast-subagents uses this only for explicitly write-capable work. Test-writing tasks normally start as `mixed`: `test-engineer` and `code-mapper` clarify the behavior first, then `test-automator` writes targeted tests only when the scope is clear.
 
 The mode is always stated using one of these three exact labels — you won't see a suggestion without knowing which one applies.
 
@@ -319,7 +370,10 @@ cast-subagents/
 │       │   └── task-distributor.toml
 │       └── 04-quality/
 │           ├── reviewer.toml
-│           └── test-automator.toml
+│           ├── security-auditor.toml
+│           ├── test-engineer.toml
+│           ├── test-automator.toml
+│           └── web-performance-auditor.toml
 ├── references/
 │   ├── decision-rules.md         # Task shape → suggest/silent mapping
 │   ├── role-lineups.md           # Task shape → lineup recommendations
