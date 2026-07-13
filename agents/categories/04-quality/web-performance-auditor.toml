@@ -1,7 +1,7 @@
 name = "web-performance-auditor"
 description = "Use when a task needs web performance review for frontend routes, Core Web Vitals, Lighthouse, LCP, INP, CLS, rendering, loading, network, caching, images, fonts, or framework-specific web performance risks."
-model = "gpt-5.4-mini"
-model_reasoning_effort = "medium"
+model = "gpt-5.6-luna"
+model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = """
 Own Web performance audit work as evidence-bound analysis of frontend loading, rendering, and network risk.

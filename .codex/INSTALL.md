@@ -45,42 +45,47 @@ python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" \
   --path /path/to/repo
 ```
 
-**3. Recommended: install bundled agent roles** — strongly recommended when the user's Codex environment has few or no existing agent roles.
+**3. Choose and install bundled agent roles.**
 
-Before deciding, inspect the user's available roles:
+Show this complete table before asking the user which roles to install. Role numbers are stable and must not be reassigned.
 
-- Global roles: `${CODEX_HOME:-$HOME/.codex}/agents/*.toml`
-- Project roles, when installing for a specific repository: `/path/to/repo/.codex/agents/*.toml`
+| # | Role | GPT-5.6 model | Reasoning effort | Description |
+|---:|---|---|---|---|
+| 1 | `code-mapper` | `gpt-5.6-terra` | `medium` | Trace code paths, files, symbols, and ownership boundaries. |
+| 2 | `search-specialist` | `gpt-5.6-luna` | `medium` | Gather focused evidence from repositories or external sources. |
+| 3 | `docs-researcher` | `gpt-5.6-luna` | `high` | Verify official APIs, versions, and documented guarantees. |
+| 4 | `knowledge-synthesizer` | `gpt-5.6-luna` | `high` | Reconcile long or conflicting findings without inventing facts. |
+| 5 | `task-distributor` | `gpt-5.6-sol` | `medium` | Split broad goals into bounded work packages. |
+| 6 | `reviewer` | `gpt-5.6-sol` | `medium` | Review correctness, regressions, contracts, and maintainability. |
+| 7 | `security-auditor` | `gpt-5.6-sol` | `high` | Audit trust boundaries, auth, secrets, and agent-tool safety. |
+| 8 | `test-engineer` | `gpt-5.6-luna` | `high` | Design minimal test coverage for behavior and risk. |
+| 9 | `test-automator` | `gpt-5.6-terra` | `xhigh` | Add bounded regression tests after behavior is clear. |
+| 10 | `web-performance-auditor` | `gpt-5.6-luna` | `high` | Audit Web performance evidence and Core Web Vitals risks. |
 
-If those directories are empty or sparse, recommend installing all 10 bundled roles so cast-subagents has a reliable baseline lineup. If the user already has a mature agent role collection, they can skip this step, install only missing bundled roles, or run the installer without `--overwrite` so existing same-name roles are preserved.
+Warn the user that every selected role will overwrite any existing same-name agent file. Unselected roles remain untouched.
 
-The bundled pack includes core investigation roles plus specialist roles such as `security-auditor`, `test-engineer`, `test-automator`, and `web-performance-auditor`.
+If `request_user_input` is available, ask exactly one structured question with these two explicit options; let the client provide its automatic `Other` free-text input:
 
-Global:
+- `Install recommended set (Recommended)` — installs and overwrites roles 1, 3, 6, 7, 8, and 9.
+- `Install all roles` — installs and overwrites all 10 roles.
+
+If `request_user_input` is unavailable, ask the user to reply with `recommended`, `all`, or describe the roles they want, such as `1,2,3`, then wait for the reply.
+
+Interpret the user's selection naturally rather than enforcing a formal input grammar. Deduplicate the resulting roles and map only to roles in the table. If the selection intent is unclear or requests an unavailable role, ask one concise follow-up and do not run the installer yet.
+
+Expand `recommended` to roles 1, 3, 6, 7, 8, and 9. Expand `all` to roles 1 through 10. Once the selection is clear, call the existing installer with `--overwrite` and one `--role` argument per selected role. Use the global or project scope already chosen by the user. For example, the recommended global install is:
 
 ```bash
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" --scope global
-```
-
-Project-only:
-
-```bash
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" \
-  --scope project \
-  --path /path/to/repo
-```
-
-Install selected roles only:
-
-```bash
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" --scope global \
+python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" --scope global --overwrite \
+  --role code-mapper \
+  --role docs-researcher \
   --role reviewer \
-  --role code-mapper
+  --role security-auditor \
+  --role test-engineer \
+  --role test-automator
 ```
 
-Only use `--overwrite` when the user explicitly wants to replace existing same-name roles with the bundled versions from this repository.
-
-If the user skips the bundled roles, cast-subagents can still suggest lineups using whatever roles are already available in the Codex environment, but it may degrade when preferred roles are missing.
+If the user declines bundled roles, continue without running the role installer. cast-subagents can still use available roles, but preferred lineups may degrade when roles are missing.
 
 **4. Tell the user to restart Codex** so the skill and AGENTS rules are loaded.
 
@@ -118,6 +123,8 @@ Re-run the gate installer to update the AGENTS block (the installer is idempoten
 ```bash
 python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" --scope global
 ```
+
+Repeat the role selection in step 3 to migrate selected bundled roles to the current release. Selected same-name files are overwritten.
 
 ## Uninstalling
 

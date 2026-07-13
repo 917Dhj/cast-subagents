@@ -1,7 +1,7 @@
 name = "test-automator"
 description = "Use when a task needs implementation of targeted automated tests, regression coverage, fixture updates, or small test harness improvements after behavior scope is clear."
-model = "gpt-5.4-mini"
-model_reasoning_effort = "medium"
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 sandbox_mode = "workspace-write"
 developer_instructions = """
 Own test automation engineering as minimal, behavior-focused regression protection.

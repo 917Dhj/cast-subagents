@@ -132,7 +132,7 @@ Tell Codex:
 Fetch and follow instructions from https://raw.githubusercontent.com/917Dhj/cast-subagents/refs/heads/main/.codex/INSTALL.md
 ```
 
-Codex will install the skill with `npx skills add`, install the AGENTS gate, recommend bundled agent roles based on your current setup, and then tell you to restart.
+Codex will install the skill with `npx skills add`, install the AGENTS gate, show the complete GPT-5.6 role table, and ask whether to install the recommended set, all roles, or a custom selection. Selected same-name roles are overwritten, then Codex tells you to restart.
 
 By default, the AGENTS gate is installed globally so cast-subagents can advise Codex across all workspaces. If `npx` has trouble, the install guide includes a Codex skill-installer fallback.
 
@@ -161,19 +161,19 @@ python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" \
   --path /path/to/repo
 ```
 
-**3. Recommended: install bundled agent roles:**
+**3. Recommended: install the bundled baseline roles:**
 
 ```bash
-# Global
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" --scope global
-
-# Project-only
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" \
-  --scope project \
-  --path /path/to/repo
+python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" --scope global --overwrite \
+  --role code-mapper \
+  --role docs-researcher \
+  --role reviewer \
+  --role security-auditor \
+  --role test-engineer \
+  --role test-automator
 ```
 
-Clean Codex setups should install these roles so cast-subagents has a reliable baseline lineup. If you already have a mature agent role collection, you can skip this step, install only selected roles, or run the installer as-is so existing same-name roles are preserved. cast-subagents still works without the bundled roles; it will use whatever roles are available and degrade when preferred roles are missing.
+Use repeated `--role` arguments to choose a different set. For project-only installation, replace `--scope global` with `--scope project --path /path/to/repo`. Every selected role overwrites an existing same-name role; unselected roles remain untouched. cast-subagents still works without the bundled roles, but preferred lineups may degrade when roles are missing.
 
 **4. Restart Codex** so the skill and AGENTS rules are loaded.
 
@@ -253,32 +253,22 @@ The Chinese examples above are included intentionally. cast-subagents matches th
 
 ### Bundled roles
 
-Ten specialized roles are included in the `agents/categories/` directory:
+Ten specialized roles are included in the `agents/categories/` directory. Their installation numbers are stable; future roles receive new numbers rather than reusing existing ones.
 
-**Core investigation**
+| # | Role | GPT-5.6 model | Reasoning effort | What it does |
+|---:|---|---|---|---|
+| 1 | `code-mapper` | `gpt-5.6-terra` | `medium` | Traces code paths, files, symbols, and ownership boundaries |
+| 2 | `search-specialist` | `gpt-5.6-luna` | `medium` | Gathers focused repository or external evidence |
+| 3 | `docs-researcher` | `gpt-5.6-luna` | `high` | Verifies official APIs, versions, and documented guarantees |
+| 4 | `knowledge-synthesizer` | `gpt-5.6-luna` | `high` | Reconciles long or conflicting findings without inventing facts |
+| 5 | `task-distributor` | `gpt-5.6-sol` | `medium` | Splits broad goals into bounded work packages |
+| 6 | `reviewer` | `gpt-5.6-sol` | `medium` | Reviews correctness, regressions, contracts, and maintainability |
+| 7 | `security-auditor` | `gpt-5.6-sol` | `high` | Audits trust boundaries, auth, secrets, and agent-tool safety |
+| 8 | `test-engineer` | `gpt-5.6-luna` | `high` | Designs minimal test coverage for behavior and risk |
+| 9 | `test-automator` | `gpt-5.6-terra` | `xhigh` | Adds bounded regression tests after behavior is clear |
+| 10 | `web-performance-auditor` | `gpt-5.6-luna` | `high` | Audits Web performance evidence and Core Web Vitals risks |
 
-| Role | What it does |
-|---|---|
-| `code-mapper` | Traces execution paths and maps file ownership across the codebase |
-| `search-specialist` | Gathers high-signal evidence quickly across code or external sources |
-| `docs-researcher` | Verifies API guarantees and documentation assumptions |
-
-**Quality specialists**
-
-| Role | What it does |
-|---|---|
-| `reviewer` | Performs Staff Engineer-style code review across correctness, contracts, regressions, and maintainability |
-| `security-auditor` | Reviews trust boundaries, auth, authorization, secrets, user input, dependencies, and LLM/tool permission risks |
-| `test-engineer` | Analyzes test strategy, coverage gaps, test levels, and Prove-It regression plans without editing files |
-| `test-automator` | Adds targeted automated regression coverage after scope is clear |
-| `web-performance-auditor` | Audits Web performance, Core Web Vitals, loading, rendering, and network risks without fabricating metrics |
-
-**Planning and synthesis**
-
-| Role | What it does |
-|---|---|
-| `knowledge-synthesizer` | Consolidates research findings into a concise, actionable summary |
-| `task-distributor` | Structures a broad goal into bounded, independent subtasks |
+The recommended installation set is roles `1,3,6,7,8,9`. The agent-friendly installer offers this set, all roles, or any custom selection and warns before overwriting selected same-name files.
 
 The skill selects capabilities first, then maps them to the roles that are actually available in your Codex environment. If a preferred role is missing, the skill says so explicitly rather than silently substituting.
 

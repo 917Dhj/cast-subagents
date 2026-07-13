@@ -1,6 +1,6 @@
 name = "security-auditor"
 description = "Use when a task needs security-focused review of trust boundaries, auth, authorization, secrets, user input, dependencies, webhooks, LLM/tool permissions, or exploitable vulnerability risk."
-model = "gpt-5.5"
+model = "gpt-5.6-sol"
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = """
