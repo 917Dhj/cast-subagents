@@ -52,6 +52,61 @@ Three reasons this matters in practice:
 2. **Zero workflow disruption.** Install and keep working the same way. The suggestion appears when it's useful; Codex proceeds normally when it isn't.
 3. **No accidental delegation.** If the main thread would handle something fine on its own, cast-subagents stays silent rather than adding overhead.
 
+## 📦 Installation
+
+### Agent-friendly install (recommended)
+
+Tell Codex:
+
+```
+Fetch and follow instructions from https://raw.githubusercontent.com/917Dhj/cast-subagents/refs/heads/main/.codex/INSTALL.md
+```
+
+Codex will install the skill with `npx skills add`, install the AGENTS gate, show the complete GPT-5.6 role table, and ask whether to install the recommended set, all roles, or a custom selection. Selected same-name roles are overwritten, then Codex tells you to restart.
+
+By default, the AGENTS gate is installed globally so cast-subagents can advise Codex across all workspaces. If `npx` has trouble, the install guide includes a Codex skill-installer fallback.
+
+### Manual install
+
+**1. Install the skill for Codex with npx Skills:**
+
+```bash
+npx skills add 917Dhj/cast-subagents -a codex
+CAST_SUBAGENTS_HOME="${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents"
+```
+
+If the command opens an interactive prompt, choose Codex as the target agent and confirm the install. If `npx` fails, use the fallback flow in `.codex/INSTALL.md`.
+
+**2. Install the AGENTS advisory gate:**
+
+Global install is the default and recommended setup. Use project-only only when you explicitly want cast-subagents enabled for one repository.
+
+```bash
+# Global — default; applies to all Codex workspaces
+python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" --scope global
+
+# Project-only — opt in for one repository
+python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" \
+  --scope project \
+  --path /path/to/repo
+```
+
+**3. Recommended: install the bundled baseline roles:**
+
+```bash
+python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" --scope global --overwrite \
+  --role code-mapper \
+  --role docs-researcher \
+  --role reviewer \
+  --role security-auditor \
+  --role test-engineer \
+  --role test-automator
+```
+
+Use repeated `--role` arguments to choose a different set. For project-only installation, replace `--scope global` with `--scope project --path /path/to/repo`. Every selected role overwrites an existing same-name role; unselected roles remain untouched. cast-subagents still works without the bundled roles, but preferred lineups may degrade when roles are missing.
+
+**4. Restart Codex** so the skill and AGENTS rules are loaded.
+
 ## ⚙️ How It Works
 
 cast-subagents has two parts that work in sequence:
@@ -121,61 +176,6 @@ open_questions: whether retries or optimistic updates affect the failure mode
 ```
 
 No agent infers scope from context — everything is explicit. The full schema is in `references/handoff-schema.md`.
-
-## 📦 Installation
-
-### Agent-friendly install (recommended)
-
-Tell Codex:
-
-```
-Fetch and follow instructions from https://raw.githubusercontent.com/917Dhj/cast-subagents/refs/heads/main/.codex/INSTALL.md
-```
-
-Codex will install the skill with `npx skills add`, install the AGENTS gate, show the complete GPT-5.6 role table, and ask whether to install the recommended set, all roles, or a custom selection. Selected same-name roles are overwritten, then Codex tells you to restart.
-
-By default, the AGENTS gate is installed globally so cast-subagents can advise Codex across all workspaces. If `npx` has trouble, the install guide includes a Codex skill-installer fallback.
-
-### Manual install
-
-**1. Install the skill for Codex with npx Skills:**
-
-```bash
-npx skills add 917Dhj/cast-subagents -a codex
-CAST_SUBAGENTS_HOME="${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents"
-```
-
-If the command opens an interactive prompt, choose Codex as the target agent and confirm the install. If `npx` fails, use the fallback flow in `.codex/INSTALL.md`.
-
-**2. Install the AGENTS advisory gate:**
-
-Global install is the default and recommended setup. Use project-only only when you explicitly want cast-subagents enabled for one repository.
-
-```bash
-# Global — default; applies to all Codex workspaces
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" --scope global
-
-# Project-only — opt in for one repository
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" \
-  --scope project \
-  --path /path/to/repo
-```
-
-**3. Recommended: install the bundled baseline roles:**
-
-```bash
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" --scope global --overwrite \
-  --role code-mapper \
-  --role docs-researcher \
-  --role reviewer \
-  --role security-auditor \
-  --role test-engineer \
-  --role test-automator
-```
-
-Use repeated `--role` arguments to choose a different set. For project-only installation, replace `--scope global` with `--scope project --path /path/to/repo`. Every selected role overwrites an existing same-name role; unselected roles remain untouched. cast-subagents still works without the bundled roles, but preferred lineups may degrade when roles are missing.
-
-**4. Restart Codex** so the skill and AGENTS rules are loaded.
 
 ## 🎯 Decision Rules
 
