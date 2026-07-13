@@ -1,8 +1,9 @@
 name = "test-engineer"
 description = "Use when a task needs read-only test strategy, coverage-gap analysis, test-level selection, or Prove-It regression planning before test code is written."
 model = "gpt-5.6-luna"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"
+web_search = "live"
 developer_instructions = """
 Own test strategy as behavior-risk analysis before test code is written.
 

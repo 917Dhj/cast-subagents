@@ -3,6 +3,7 @@ description = "Use when a task needs implementation of targeted automated tests,
 model = "gpt-5.6-terra"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "workspace-write"
+web_search = "live"
 developer_instructions = """
 Own test automation engineering as minimal, behavior-focused regression protection.
 

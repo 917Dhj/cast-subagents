@@ -8,14 +8,13 @@
 - Surface:
 - Suite: `smoke` / `extended` / `desktop`
 - Arm: `baseline` / `plugin`
-- Installation mode: `plugin` / `$CODEX_HOME/skills` / `symlink` / `legacy root skill`
+- Installation mode: `plugin`
 - Raw output directory:
 
 ## Discovery
 
 | Check | Result | Pass? |
 | --- | --- | --- |
-| `using-cast-subagents` visible |  |  |
 | `cast-subagents` visible |  |  |
 | No skill load errors |  |  |
 

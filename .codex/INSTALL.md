@@ -1,82 +1,72 @@
-# Installing cast-subagents for Codex
+# Installing Cast Subagents for Codex
 
-Advisory subagent lineup suggestions for Codex — suggests one lineup before complex tasks, then waits for approval.
+Cast Subagents is a Codex plugin that suggests one specialist lineup before complex work, waits for approval, and preserves bundled role settings across native and CLI execution backends.
+
+This file is the only supported installation entry. Follow it as one agent-led flow; do not ask the user to run the role installer manually.
 
 ## Prerequisites
 
-- Node.js/npm (`npx`)
-- Python 3
+- Codex with plugin and Hook support
+- Python 3.11+
 
 ## Installation
 
-**1. Install the skill for Codex with npx Skills:**
+### 1. Add the repository marketplace
 
 ```bash
-npx skills add 917Dhj/cast-subagents -a codex
-CAST_SUBAGENTS_HOME="${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents"
+codex plugin marketplace add 917Dhj/cast-subagents
 ```
 
-If the command opens an interactive prompt, the agent may complete the normal install prompts for you: choose Codex as the target agent and confirm the install. If the prompt asks for anything else, pause and ask the user.
-
-If `npx` fails, use the Codex skill-installer fallback instead:
+### 2. Install the plugin
 
 ```bash
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-installer/scripts/install-skill-from-github.py" \
-  --repo 917Dhj/cast-subagents \
-  --path . \
-  --name cast-subagents
-
-CAST_SUBAGENTS_HOME="${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents"
+codex plugin add cast-subagents@cast-subagents --json
 ```
 
-**2. Install the advisory gate** (adds a trigger block to AGENTS.md so Codex knows when to invoke the skill):
+Keep the returned `installedPath`; use that exact absolute path as `CAST_SUBAGENTS_PLUGIN` below. Do not infer a versioned cache directory because Git-backed marketplace plugins may use `local` as their cache version.
 
-Default: install globally. This is the recommended setup because cast-subagents is meant to advise Codex across workspaces, before non-trivial tasks begin. It writes to `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`.
+### 3. Trust the SessionStart Hook
 
-```bash
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" --scope global
-```
+Tell the user to open `/hooks`, review the Cast Subagents `SessionStart` command, and trust it. Wait for confirmation before continuing. Codex's normal warning and fail-open behavior applies when the Hook is untrusted, skipped, times out, or fails.
 
-Use project-only install only when the user explicitly wants cast-subagents enabled for one repository:
+### 4. Choose the global Bundled Subagents
 
-```bash
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" \
-  --scope project \
-  --path /path/to/repo
-```
-
-**3. Choose and install bundled agent roles.**
-
-Show this complete table before asking the user which roles to install. Role numbers are stable and must not be reassigned.
+Show this complete table before asking which roles to install. Role numbers are stable and must not be reassigned.
 
 | # | Role | GPT-5.6 model | Reasoning effort | Description |
 |---:|---|---|---|---|
-| 1 | `code-mapper` | `gpt-5.6-terra` | `medium` | Trace code paths, files, symbols, and ownership boundaries. |
+| 1 | `code-mapper` | `gpt-5.6-terra` | `high` | Trace code paths, files, symbols, and ownership boundaries. |
 | 2 | `search-specialist` | `gpt-5.6-luna` | `medium` | Gather focused evidence from repositories or external sources. |
 | 3 | `docs-researcher` | `gpt-5.6-luna` | `high` | Verify official APIs, versions, and documented guarantees. |
 | 4 | `knowledge-synthesizer` | `gpt-5.6-luna` | `high` | Reconcile long or conflicting findings without inventing facts. |
 | 5 | `task-distributor` | `gpt-5.6-sol` | `medium` | Split broad goals into bounded work packages. |
 | 6 | `reviewer` | `gpt-5.6-sol` | `medium` | Review correctness, regressions, contracts, and maintainability. |
 | 7 | `security-auditor` | `gpt-5.6-sol` | `high` | Audit trust boundaries, auth, secrets, and agent-tool safety. |
-| 8 | `test-engineer` | `gpt-5.6-luna` | `high` | Design minimal test coverage for behavior and risk. |
+| 8 | `test-engineer` | `gpt-5.6-luna` | `xhigh` | Design minimal test coverage for behavior and risk. |
 | 9 | `test-automator` | `gpt-5.6-terra` | `xhigh` | Add bounded regression tests after behavior is clear. |
-| 10 | `web-performance-auditor` | `gpt-5.6-luna` | `high` | Audit Web performance evidence and Core Web Vitals risks. |
+| 10 | `web-performance-auditor` | `gpt-5.6-luna` | `xhigh` | Audit Web performance evidence and Core Web Vitals risks. |
 
-Warn the user that every selected role will overwrite any existing same-name agent file. Unselected roles remain untouched.
+Warn that each selected role overwrites an existing same-name global Agent file; unselected files remain untouched.
 
-If `request_user_input` is available, ask exactly one structured question with these two explicit options; let the client provide its automatic `Other` free-text input:
+If `request_user_input` is available, ask one structured question with these options and allow the client's free-form choice:
 
-- `Install recommended set (Recommended)` — installs and overwrites roles 1, 3, 6, 7, 8, and 9.
-- `Install all roles` — installs and overwrites all 10 roles.
+- `Install recommended set (Recommended)` — roles 1, 3, 6, 7, 8, and 9.
+- `Install all roles` — all ten roles.
 
-If `request_user_input` is unavailable, ask the user to reply with `recommended`, `all`, or describe the roles they want, such as `1,2,3`, then wait for the reply.
+Otherwise ask for `recommended`, `all`, or a custom role selection. Interpret the choice naturally, deduplicate it, and ask one concise follow-up only when the selection is unclear.
 
-Interpret the user's selection naturally rather than enforcing a formal input grammar. Deduplicate the resulting roles and map only to roles in the table. If the selection intent is unclear or requests an unavailable role, ask one concise follow-up and do not run the installer yet.
+### 5. Run the Role Installer for the user
 
-Expand `recommended` to roles 1, 3, 6, 7, 8, and 9. Expand `all` to roles 1 through 10. Once the selection is clear, call the existing installer with `--overwrite` and one `--role` argument per selected role. Use the global or project scope already chosen by the user. For example, the recommended global install is:
+Set `CAST_SUBAGENTS_PLUGIN` to the exact `installedPath` returned in step 2. For example:
 
 ```bash
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" --scope global --overwrite \
+CAST_SUBAGENTS_PLUGIN="/absolute/path/from/the-installedPath-field"
+```
+
+Run the installer with `--overwrite` and one `--role` per selected role. For the recommended set:
+
+```bash
+python3 "$CAST_SUBAGENTS_PLUGIN/scripts/install-agent-roles.py" --overwrite \
   --role code-mapper \
   --role docs-researcher \
   --role reviewer \
@@ -85,59 +75,26 @@ python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" --scope global --o
   --role test-automator
 ```
 
-If the user declines bundled roles, continue without running the role installer. cast-subagents can still use available roles, but preferred lineups may degrade when roles are missing.
+The installer writes only to the global Agent directory under the effective Codex home.
 
-**4. Tell the user to restart Codex** so the skill and AGENTS rules are loaded.
+### 6. Verify and restart
 
-## Verify
-
-If this is a new shell, set `CAST_SUBAGENTS_HOME` to the install path first. For the default `npx` install, use `${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents`. For the Codex skill-installer fallback, use `${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents`.
-
-Check that the gate block was added:
+Verify the plugin and selected roles:
 
 ```bash
-grep -c "cast-subagents:start" "${CODEX_HOME:-$HOME/.codex}/AGENTS.md"
+test -f "$CAST_SUBAGENTS_PLUGIN/skills/cast-subagents/SKILL.md"
+test -f "${CODEX_HOME:-$HOME/.codex}/agents/code-mapper.toml"
 ```
 
-Expected output: `1`
-
-Check that the skill directory exists:
-
-```bash
-ls "$CAST_SUBAGENTS_HOME/SKILL.md"
-```
+Tell the user to start a new Codex task. The trusted `SessionStart` Hook and newly installed roles are loaded in the new task.
 
 ## Updating
 
-Run the npx install command again:
+Refresh the marketplace and reinstall the plugin:
 
 ```bash
-npx skills add 917Dhj/cast-subagents -a codex
-CAST_SUBAGENTS_HOME="${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents"
+codex plugin marketplace upgrade cast-subagents
+codex plugin add cast-subagents@cast-subagents --json
 ```
 
-If you used the Codex skill-installer fallback, re-run that fallback command instead and keep `CAST_SUBAGENTS_HOME` pointed at `${CODEX_HOME:-$HOME/.codex}/skills/cast-subagents`.
-
-Re-run the gate installer to update the AGENTS block (the installer is idempotent — it updates in place):
-
-```bash
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" --scope global
-```
-
-Repeat the role selection in step 3 to migrate selected bundled roles to the current release. Selected same-name files are overwritten.
-
-## Uninstalling
-
-Set `CAST_SUBAGENTS_HOME` to the install path before uninstalling.
-
-Remove the advisory gate block from AGENTS.md:
-
-```bash
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" --scope global --remove
-```
-
-Remove the skill directory:
-
-```bash
-rm -rf "$CAST_SUBAGENTS_HOME"
-```
+Use the newly returned `installedPath`. If Codex marks the changed Hook for review, repeat `/hooks` trust. Then repeat the role selection and run the current release's Role Installer so selected global roles receive the new definitions.

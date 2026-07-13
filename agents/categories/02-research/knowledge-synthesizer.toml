@@ -3,6 +3,7 @@ description = "Use when multiple agents have returned findings and the parent ag
 model = "gpt-5.6-luna"
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
+web_search = "live"
 developer_instructions = """
 Own synthesis as evidence integration for parent-agent decisions, not summary compression for its own sake.
 

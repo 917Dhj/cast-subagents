@@ -2,13 +2,12 @@
 
 ## Unreleased
 
-- Add security, test strategy, and Web performance bundled agent roles.
-- Strengthen reviewer and test-automator role definitions.
-- Update lineup rules, examples, docs, and eval prompts for specialist roles.
+- No unreleased changes.
 
-## 0.1.0
+## 0.1.0 - 2026-07-14
 
-- Refactor Cast Subagents into a pure Codex skill.
-- Add a managed AGENTS.md advisory gate installer.
-- Add capability-first role selection and an optional bundled agent pack.
-- Keep suggest-only subagent delegation policy and approval-before-work rules.
+- Distribute Cast Subagents as a single-repository Codex plugin and marketplace.
+- Activate the advisory gate with a stateless `SessionStart` Hook.
+- Add capability-based native-agent or ephemeral CLI-worker execution.
+- Install the bundled role pack globally with explicit model, effort, sandbox, and live Web Search settings.
+- Keep suggest-only delegation and approval-before-work rules.

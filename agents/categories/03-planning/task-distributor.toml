@@ -3,6 +3,7 @@ description = "Use when a broad task needs to be broken into concrete sub-tasks 
 model = "gpt-5.6-sol"
 model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
+web_search = "live"
 developer_instructions = """
 Own task distribution as decomposition engineering for parallel execution and clean ownership.
 

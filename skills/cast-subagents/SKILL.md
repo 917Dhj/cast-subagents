@@ -116,7 +116,8 @@ Bundled capability map:
 | Web performance audit | `web-performance-auditor` | read-only |
 
 Availability rules:
-- recommend only roles that are explicitly available in the current Codex session
+- for the Native Subagent Backend, recommend roles exposed by the current Codex session
+- when native role metadata is hidden, treat bundled roles installed by the Role Installer as available to the CLI Worker Backend unless the user says installation was skipped or the runner reports a missing role
 - do not invent role names
 - do not assume generic fallback roles exist
 - if a capability has no available role, drop that role from the lineup
@@ -211,8 +212,19 @@ Once the user approves delegation:
 - include an explicit delegated-subagent bypass so the child agent does not invoke cast-subagents again
 - summarize results back in the main thread instead of dumping raw logs
 
+### Select the Execution Backend
+
+Perform a Backend Capability Check against the visible `spawn_agent` interface after approval:
+
+- If `agent_type`, `model`, and `reasoning_effort` are all exposed, use the Native Subagent Backend and follow the native spawn policy below.
+- If any required selector is hidden, use the CLI Worker Backend. Do not treat `task_name` as an agent selector and do not use a generic native child when the role settings cannot be guaranteed.
+
+For each approved CLI role, resolve the plugin root from this Skill location and invoke `scripts/run-cli-agent.py` once. Pass the role name, the Root Session workspace with `-C`, and each required additional writable or readable directory with `--add-dir`. Send the complete delegated handoff on stdin and use the runner's stdout as that role's result. A non-zero exit and stderr are a visible worker failure; do not retry by removing the multi-agent disable flags.
+
+The Root Session owns orchestration for both backends. Read-only roles may run concurrently. Write-capable roles run serially unless their write scopes are clearly disjoint. Mixed work completes its read-only phase before any write-capable role starts.
+
 Spawn call policy:
-- default to role-specific spawning: specify the target `agent_type`, do not set `fork_context`, and pass a self-contained handoff as the child prompt
+- for the Native Subagent Backend, default to role-specific spawning: specify the target `agent_type`, do not set `fork_context`, and pass a self-contained handoff as the child prompt
 - treat the handoff as the context carrier; do not rely on inherited chat history for task-critical context
 - use `fork_context` only when exact conversation history matters more than role specialization
 - when using `fork_context`, do not specify `agent_type`; accept that the child inherits the parent agent type

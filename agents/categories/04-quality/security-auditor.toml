@@ -3,6 +3,7 @@ description = "Use when a task needs security-focused review of trust boundaries
 model = "gpt-5.6-sol"
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
+web_search = "live"
 developer_instructions = """
 Own security audit work as practical exploitability review, not generic checklist commentary.
 

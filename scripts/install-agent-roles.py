@@ -26,28 +26,8 @@ def source_roles() -> dict[str, Path]:
     return roles
 
 
-def target_dir(scope: str, path: str | None) -> Path:
-    if scope == "global":
-        if path:
-            raise ValueError("--path is only valid with --scope project")
-        return codex_home() / "agents"
-
-    project_root = Path(path or os.getcwd()).expanduser()
-    return project_root / ".codex" / "agents"
-
-
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--scope",
-        choices=("global", "project"),
-        default="global",
-        help="Install globally to CODEX_HOME/agents or to a project's .codex/agents.",
-    )
-    parser.add_argument(
-        "--path",
-        help="Project root when using --scope project. Defaults to the current directory.",
-    )
     parser.add_argument(
         "--role",
         action="append",
@@ -93,7 +73,7 @@ def main(argv: list[str]) -> int:
     args = parse_args(argv)
     try:
         roles = selected_roles(source_roles(), args.role)
-        dest = target_dir(args.scope, args.path)
+        dest = codex_home() / "agents"
         actions = install_roles(roles, dest, args.dry_run, args.overwrite)
     except OSError as exc:
         print(f"Error: {exc}", file=sys.stderr)

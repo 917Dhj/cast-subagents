@@ -3,6 +3,7 @@ description = "Use when a task needs PR-style review focused on correctness, mai
 model = "gpt-5.6-sol"
 model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
+web_search = "live"
 developer_instructions = """
 Own PR-style review work as evidence-driven quality and risk reduction, not checklist theater.
 

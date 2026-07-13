@@ -14,7 +14,7 @@
   <a href="https://github.com/917Dhj/cast-subagents/stargazers"><img src="https://img.shields.io/github/stars/917Dhj/cast-subagents?style=flat" alt="GitHub Stars"></a>
   <a href="https://github.com/917Dhj/cast-subagents"><img src="https://img.shields.io/badge/Status-Active-brightgreen.svg" alt="Status: Active"></a>
   <a href="https://github.com/917Dhj/cast-subagents"><img src="https://img.shields.io/badge/PRs-Welcome-brightgreen.svg" alt="PRs Welcome"></a>
-  <img src="https://img.shields.io/badge/Python-3.10+-blue.svg" alt="Python 3.10+">
+  <img src="https://img.shields.io/badge/Python-3.11+-blue.svg" alt="Python 3.11+">
 </p>
 
 
@@ -54,58 +54,13 @@ Three reasons this matters in practice:
 
 ## 📦 Installation
 
-### Agent-friendly install (recommended)
-
 Tell Codex:
 
 ```
 Fetch and follow instructions from https://raw.githubusercontent.com/917Dhj/cast-subagents/refs/heads/main/.codex/INSTALL.md
 ```
 
-Codex will install the skill with `npx skills add`, install the AGENTS gate, show the complete GPT-5.6 role table, and ask whether to install the recommended set, all roles, or a custom selection. Selected same-name roles are overwritten, then Codex tells you to restart.
-
-By default, the AGENTS gate is installed globally so cast-subagents can advise Codex across all workspaces. If `npx` has trouble, the install guide includes a Codex skill-installer fallback.
-
-### Manual install
-
-**1. Install the skill for Codex with npx Skills:**
-
-```bash
-npx skills add 917Dhj/cast-subagents -a codex
-CAST_SUBAGENTS_HOME="${AGENTS_HOME:-$HOME/.agents}/skills/cast-subagents"
-```
-
-If the command opens an interactive prompt, choose Codex as the target agent and confirm the install. If `npx` fails, use the fallback flow in `.codex/INSTALL.md`.
-
-**2. Install the AGENTS advisory gate:**
-
-Global install is the default and recommended setup. Use project-only only when you explicitly want cast-subagents enabled for one repository.
-
-```bash
-# Global — default; applies to all Codex workspaces
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" --scope global
-
-# Project-only — opt in for one repository
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agents-gate.py" \
-  --scope project \
-  --path /path/to/repo
-```
-
-**3. Recommended: install the bundled baseline roles:**
-
-```bash
-python3 "$CAST_SUBAGENTS_HOME/scripts/install-agent-roles.py" --scope global --overwrite \
-  --role code-mapper \
-  --role docs-researcher \
-  --role reviewer \
-  --role security-auditor \
-  --role test-engineer \
-  --role test-automator
-```
-
-Use repeated `--role` arguments to choose a different set. For project-only installation, replace `--scope global` with `--scope project --path /path/to/repo`. Every selected role overwrites an existing same-name role; unselected roles remain untouched. cast-subagents still works without the bundled roles, but preferred lineups may degrade when roles are missing.
-
-**4. Restart Codex** so the skill and AGENTS rules are loaded.
+The installation guide is the only supported entry point. Codex adds the repository marketplace, installs `cast-subagents@cast-subagents`, asks you to trust the `SessionStart` Hook, shows the complete GPT-5.6 role table, and installs your selected roles globally. You never need to run the Role Installer yourself. Start a new task after installation.
 
 ## 🎭 Roles & Lineups
 
@@ -115,16 +70,16 @@ Ten specialized roles are included in the `agents/categories/` directory. Their 
 
 | # | Role | GPT-5.6 model | Reasoning effort | What it does |
 |---:|---|---|---|---|
-| 1 | `code-mapper` | `gpt-5.6-terra` | `medium` | Traces code paths, files, symbols, and ownership boundaries |
+| 1 | `code-mapper` | `gpt-5.6-terra` | `high` | Traces code paths, files, symbols, and ownership boundaries |
 | 2 | `search-specialist` | `gpt-5.6-luna` | `medium` | Gathers focused repository or external evidence |
 | 3 | `docs-researcher` | `gpt-5.6-luna` | `high` | Verifies official APIs, versions, and documented guarantees |
 | 4 | `knowledge-synthesizer` | `gpt-5.6-luna` | `high` | Reconciles long or conflicting findings without inventing facts |
 | 5 | `task-distributor` | `gpt-5.6-sol` | `medium` | Splits broad goals into bounded work packages |
 | 6 | `reviewer` | `gpt-5.6-sol` | `medium` | Reviews correctness, regressions, contracts, and maintainability |
 | 7 | `security-auditor` | `gpt-5.6-sol` | `high` | Audits trust boundaries, auth, secrets, and agent-tool safety |
-| 8 | `test-engineer` | `gpt-5.6-luna` | `high` | Designs minimal test coverage for behavior and risk |
+| 8 | `test-engineer` | `gpt-5.6-luna` | `xhigh` | Designs minimal test coverage for behavior and risk |
 | 9 | `test-automator` | `gpt-5.6-terra` | `xhigh` | Adds bounded regression tests after behavior is clear |
-| 10 | `web-performance-auditor` | `gpt-5.6-luna` | `high` | Audits Web performance evidence and Core Web Vitals risks |
+| 10 | `web-performance-auditor` | `gpt-5.6-luna` | `xhigh` | Audits Web performance evidence and Core Web Vitals risks |
 
 The recommended installation set is roles `1,3,6,7,8,9`. The agent-friendly installer offers this set, all roles, or any custom selection and warns before overwriting selected same-name files.
 
@@ -156,7 +111,7 @@ Specialist examples:
 
 The cap is four roles. If a task seems to need more, cast-subagents either compresses the lineup or stays silent rather than padding it out.
 
-These role names are compatible with VoltAgent/awesome-codex-subagents and similar community Codex subagent collections. If you use a custom role set, you can adapt `references/role-lineups.md` to add your own task shape mappings.
+These role names are compatible with VoltAgent/awesome-codex-subagents and similar community Codex subagent collections. If you use a custom role set, you can adapt `skills/cast-subagents/references/role-lineups.md` to add your own task shape mappings.
 
 ## 🔄 Work Modes
 
@@ -242,18 +197,19 @@ The Chinese examples above are included intentionally. cast-subagents matches th
 
 ## ⚙️ How It Works
 
-cast-subagents has two parts that work in sequence:
+cast-subagents has three parts that work in sequence:
 
-- **The AGENTS.md gate** is the always-on trigger. It adds a short advisory block to your Codex `AGENTS.md` that tells Codex to check for a subagent-worthy task before starting any non-trivial work.
-- **`SKILL.md`** is the advisor. When the gate determines a suggestion is warranted, the skill does the detailed work: classifies the task shape, selects a lineup of 1–4 roles, determines the work mode, and writes the suggestion message. Then it stops and waits.
+- **The `SessionStart` Hook** activates a short advisory gate for the root session. It is restored after startup, resume, clear, and compaction without modifying instruction files.
+- **The skill** is the advisor. When the gate determines a suggestion is warranted, it classifies the task shape, selects a lineup of 1–4 roles, determines the work mode, and writes the suggestion message. Then it stops and waits.
+- **The execution backend** runs approved handoffs. Codex uses native custom agents when the spawn interface exposes role and model controls; otherwise it uses temporary `codex exec` workers that preserve each role's model, effort, sandbox, instructions, and live Web Search.
 
-Think of them as gatekeeper and advisor: the gate decides whether to escalate; the skill decides what to recommend.
+CLI workers are leaf agents: multi-agent features are disabled, so they cannot delegate again.
 
 ```
 User sends task
       │
       ▼
-AGENTS.md gate checks task
+SessionStart Hook activates advisory gate
       │
       ├── task is simple / single-lane / opted out
       │         │
@@ -279,8 +235,8 @@ AGENTS.md gate checks task
    declined             approved
       │                    │
       ▼                    ▼
-  continue in         delegate with
-  main thread         handoff schema
+  continue in         select native or
+  main thread         CLI worker backend
 ```
 
 ### The Suggestion Contract
@@ -308,7 +264,7 @@ write_policy: read-only
 open_questions: whether retries or optimistic updates affect the failure mode
 ```
 
-No agent infers scope from context — everything is explicit. The full schema is in `references/handoff-schema.md`.
+No agent infers scope from context — everything is explicit. The full schema is in `skills/cast-subagents/references/handoff-schema.md`.
 
 ## ❓ FAQ
 
@@ -318,7 +274,7 @@ That's a deliberate design choice, not a limitation. Subagents multiply token co
 
 **Will it slow Codex down on simple tasks?**
 
-No. The AGENTS gate evaluates every task before responding, but for simple, single-domain, or single-file work it stays completely silent. You won't see a suggestion for tasks that don't warrant one.
+No. The `SessionStart` Hook loads the advisory gate once per root session lifecycle event. For simple, single-domain, or single-file work, the gate stays completely silent.
 
 **What if I want to skip the suggestion just this once?**
 
@@ -326,11 +282,11 @@ Include a phrase like "do not use subagents" or "no subagents" in your prompt. T
 
 **Does it work with custom subagent collections?**
 
-Yes. The preferred role names are compatible with collections like VoltAgent/awesome-codex-subagents. If you use a custom set, edit `references/role-lineups.md` to add your own task shape mappings. cast-subagents will use whatever roles are available and say so explicitly when a preferred role is missing.
+Yes. The preferred role names are compatible with collections like VoltAgent/awesome-codex-subagents. If you use a custom set, edit `skills/cast-subagents/references/role-lineups.md` to add your own task shape mappings. cast-subagents will use whatever roles are available and say so explicitly when a preferred role is missing.
 
 **Does it edit my code?**
 
-No. cast-subagents produces a suggestion and waits. Even after approval, the spawn is handled by Codex — cast-subagents doesn't touch your files at any point.
+The advisory step does not edit code. After approval, an approved write-capable role may edit within its explicit handoff and sandbox; read-only roles remain read-only.
 
 **Does it support non-English prompts?**
 
@@ -338,15 +294,24 @@ Yes. cast-subagents matches your language when writing the suggestion. Role name
 
 **Can I customize which task shapes trigger a suggestion?**
 
-Yes. `references/decision-rules.md` is the source of truth for task shape classification. `references/role-lineups.md` controls lineup recommendations. Both are plain Markdown tables — edit them directly to add, remove, or adjust rules. No configuration language to learn.
+Yes. `skills/cast-subagents/references/decision-rules.md` is the source of truth for task shape classification. `skills/cast-subagents/references/role-lineups.md` controls lineup recommendations. Both are plain Markdown tables — edit them directly to add, remove, or adjust rules. No configuration language to learn.
 
 ## 🗂 Project Structure
 
 ```text
 cast-subagents/
-├── SKILL.md                      # Core advisor skill
+├── .codex-plugin/
+│   └── plugin.json               # Plugin manifest
+├── .agents/plugins/
+│   └── marketplace.json          # Single-plugin marketplace
 ├── .codex/
 │   └── INSTALL.md                # Agent-readable install instructions
+├── hooks/
+│   ├── hooks.json                # SessionStart registration
+│   └── session_start.py          # Stateless advisory gate output
+├── skills/cast-subagents/
+│   ├── SKILL.md                  # Core advisor skill
+│   └── references/               # Rules, lineups, examples, and handoff schema
 ├── agents/
 │   ├── openai.yaml               # Skill interface definition
 │   └── categories/
@@ -364,16 +329,9 @@ cast-subagents/
 │           ├── test-engineer.toml
 │           ├── test-automator.toml
 │           └── web-performance-auditor.toml
-├── references/
-│   ├── decision-rules.md         # Task shape → suggest/silent mapping
-│   ├── role-lineups.md           # Task shape → lineup recommendations
-│   ├── suggestion-contract.md    # Output format and tone rules
-│   ├── handoff-schema.md         # Post-approval delegation payload
-│   ├── examples-positive.md      # Tasks that should trigger a suggestion
-│   └── examples-negative.md      # Tasks that should stay silent
 ├── scripts/
-│   ├── install-agents-gate.py    # Manages the AGENTS.md trigger block
-│   └── install-agent-roles.py    # Copies bundled .toml files to Codex agents dir
+│   ├── install-agent-roles.py    # Installs bundled roles globally
+│   └── run-cli-agent.py          # Runs one temporary leaf CLI worker
 ├── evals/
 │   ├── prompts.yaml
 │   ├── rubric.md
@@ -382,7 +340,7 @@ cast-subagents/
 └── CHANGELOG.md
 ```
 
-The `references/` directory is where substantive changes go. The `SKILL.md` loads these references at runtime, so you can tune decision rules, lineup tables, and wording without touching the skill logic itself.
+The skill's `references/` directory is where substantive policy changes go. `SKILL.md` loads these references at runtime, so you can tune decision rules, lineup tables, and wording without touching the skill logic itself.
 
 ## 🙏 Acknowledgments
 
@@ -396,8 +354,8 @@ The role design for Staff Engineer review, security auditing, test strategy, and
 
 Issues and pull requests are welcome. The most useful contributions are:
 
-- New task shapes in `references/decision-rules.md` with a matching lineup in `references/role-lineups.md`
-- Positive and negative examples in `references/examples-positive.md` and `references/examples-negative.md` that ground the new rule in real prompts
+- New task shapes in `skills/cast-subagents/references/decision-rules.md` with a matching lineup in `skills/cast-subagents/references/role-lineups.md`
+- Positive and negative examples in `skills/cast-subagents/references/examples-positive.md` and `skills/cast-subagents/references/examples-negative.md` that ground the new rule in real prompts
 - Eval scenarios in `evals/scenarios.md` that cover edge cases where the current rules produce an unexpected result
 
 When adding a decision rule, the useful test is: can you write a prompt that should trigger it, and a similar-looking prompt that should stay silent? If both are in the example files, the rule is well-scoped.
