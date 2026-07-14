@@ -28,6 +28,8 @@ If the current user message explicitly invokes `$diverter-mode`, execute Mode Co
 
 If the current task message explicitly says this is a delegated subagent task, or includes `delegation_context: delegated-subagent`, do not invoke `$diverter`, suggest another lineup, or request Dispatch Authorization. Execute only the assigned handoff within its constraints.
 
+If higher-priority session instructions state that proactive multi-agent delegation is active, stop evaluating this gate. Do not invoke or mention Diverter. Continue under the native policy.
+
 Before starting any non-trivial coding, review, research, planning, codebase-mapping, docs/API-verification, or regression-risk task, check whether it matches the Diverter trigger patterns.
 
 If it matches, invoke `$diverter` first and apply the loaded Delegation Policy. An explicit user instruction for the current task may override this policy without changing persistent configuration.

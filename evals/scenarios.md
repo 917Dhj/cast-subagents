@@ -107,6 +107,21 @@ codex exec --dangerously-bypass-hook-trust -s read-only \
 
 This is required for the Native Proactive Delegation, failure-recovery, and compact/resume checks. The provided focused context strings contain no single quotes; if a future case does, encode it as a valid TOML string before passing `-c`.
 
+Run `auto-pos-02` in a disposable writable checkout so the mixed workflow and CLI worker state can execute without touching the development repository:
+
+```bash
+AUTO_WRITE_WORKSPACE=/tmp/codex-subagent-eval/auto-pos-02-workspace
+rm -rf "$AUTO_WRITE_WORKSPACE"
+cp -R "$DIVERTER_PLUGIN_ROOT" "$AUTO_WRITE_WORKSPACE"
+CODEX_HOME=/tmp/codex-subagent-eval/skill \
+codex exec --dangerously-bypass-hook-trust -s workspace-write \
+  --add-dir /tmp/codex-subagent-eval/skill \
+  -C "$AUTO_WRITE_WORKSPACE" \
+  "Add targeted regression tests for the falsey-value settings save bug in evals/fixtures/settings-save/settings_save.py, but first map the exact behavior boundary."
+```
+
+All other focused `auto-*` cases remain read-only.
+
 Smoke pass gates:
 
 - positive/edge trigger rate is at least `75%`

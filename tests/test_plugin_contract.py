@@ -86,6 +86,19 @@ class PluginContractTest(unittest.TestCase):
 
                 self.assertIn("delegation_policy: ask", result.stdout)
 
+    def test_session_start_defers_to_native_before_triggering_diverter(self) -> None:
+        result = subprocess.run(
+            [sys.executable, ROOT / "hooks" / "session_start.py"],
+            text=True,
+            capture_output=True,
+            check=True,
+        )
+
+        native_stop = result.stdout.index("proactive multi-agent delegation is active")
+        trigger = result.stdout.index("invoke `$diverter` first")
+        self.assertLess(native_stop, trigger)
+        self.assertIn("Do not invoke or mention Diverter", result.stdout)
+
     def test_plugin_package_and_session_start_hook_are_discoverable(self) -> None:
         manifest = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text())
         marketplace = json.loads(
@@ -131,7 +144,6 @@ class PluginContractTest(unittest.TestCase):
             check=True,
         )
         self.assertIn("Diverter Delegation Gate", result.stdout)
-        self.assertIn("delegation_policy: ask", result.stdout)
         self.assertIn("delegation_context: delegated-subagent", result.stdout)
         self.assertIn("invoke `$diverter` first", result.stdout)
 
@@ -253,6 +265,17 @@ class PluginContractTest(unittest.TestCase):
         scenarios = (ROOT / "evals" / "scenarios.md").read_text()
         self.assertIn("hooks/session_start.py", scenarios)
         self.assertIn("DIVERTER_PLUGIN_ROOT", scenarios)
+        self.assertIn(
+            'prompt: "Review this branch against origin/main for correctness and maintainability regressions."',
+            prompts,
+        )
+        self.assertIn("AUTO_WRITE_WORKSPACE", scenarios)
+        self.assertIn("-s workspace-write", scenarios)
+        self.assertIn("--add-dir /tmp/codex-subagent-eval/skill", scenarios)
+        self.assertIn("evals/fixtures/settings-save/settings_save.py", prompts)
+        self.assertTrue(
+            (ROOT / "evals" / "fixtures" / "settings-save" / "settings_save.py").is_file()
+        )
 
     def test_readmes_explain_native_proactive_delegation_boundary(self) -> None:
         english = (ROOT / "README.md").read_text()

@@ -355,7 +355,7 @@ prompts:
     surface: shared
     smoke: true
     category: positive
-    prompt: "Review this branch against main for correctness, security boundaries, and missing tests."
+    prompt: "Review this branch against origin/main for correctness and maintainability regressions."
     expected_should_suggest: true
     expected_should_dispatch: true
     expected_roles: [reviewer, code-mapper]
@@ -369,7 +369,7 @@ prompts:
     surface: cli
     smoke: true
     category: positive
-    prompt: "Add targeted regression tests for the settings save bug, but first map the exact behavior boundary."
+    prompt: "Add targeted regression tests for the falsey-value settings save bug in evals/fixtures/settings-save/settings_save.py, but first map the exact behavior boundary."
     expected_should_suggest: true
     expected_should_dispatch: true
     expected_roles: [test-engineer, test-automator, code-mapper]
