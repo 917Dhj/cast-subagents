@@ -1,6 +1,6 @@
-# Cast Subagents
+# Diverter
 
-Cast Subagents recommends and supplies specialized subagents while leaving the parent Codex session under user control.
+Diverter recommends and supplies specialized subagents while leaving the parent Codex session under user control.
 
 ## Language
 
@@ -9,7 +9,7 @@ The user-controlled Codex session that evaluates a task, approves delegation, an
 _Avoid_: Root agent configuration, managed root
 
 **Bundled Subagent**:
-A specialized agent definition shipped by Cast Subagents for delegated work. Cast Subagents owns its default model configuration, and every bundled role enables live web search without requiring it to be used.
+A specialized agent definition shipped by Diverter for delegated work. Diverter owns its default model configuration, and every bundled role enables live web search without requiring it to be used.
 _Avoid_: Root agent, parent agent
 
 **Static Model Mapping**:
@@ -30,7 +30,7 @@ _Avoid_: Model router, model profile
 | `web-performance-auditor` | `gpt-5.6-luna` | `xhigh` |
 
 **Recommended Role Set**:
-The default installation selection for common Cast Subagents workflows: `code-mapper`, `docs-researcher`, `reviewer`, `security-auditor`, `test-engineer`, and `test-automator`.
+The default installation selection for common Diverter workflows: `code-mapper`, `docs-researcher`, `reviewer`, `security-auditor`, `test-engineer`, and `test-automator`.
 _Avoid_: All roles, minimal roles
 
 **Selected Role Set**:
@@ -74,11 +74,11 @@ The Root Session's inspection of the visible `spawn_agent` interface. Native Sub
 _Avoid_: Sol check, version check
 
 **Native Proactive Delegation**:
-A Codex session policy that explicitly permits the Root Session to create subagents without a separate user request. When active, Cast Subagents is ineligible even when explicitly invoked; without that explicit policy signal, Cast remains eligible.
+A Codex session policy that explicitly permits the Root Session to create subagents without a separate user request. When active, Diverter is ineligible even when explicitly invoked; without that explicit policy signal, Diverter remains eligible.
 _Avoid_: Ultra check, Sol check
 
 **Orchestration Ownership**:
-The rule that exactly one mechanism may coordinate subagent creation for a Root Session. Native Proactive Delegation owns orchestration whenever it is active; otherwise Cast Subagents may advise after user approval.
+The rule that exactly one mechanism may coordinate subagent creation for a Root Session. Native Proactive Delegation owns orchestration whenever it is active; otherwise Diverter may advise after user approval.
 _Avoid_: Backend preference, delegation priority
 
 **Advisory Gate**:

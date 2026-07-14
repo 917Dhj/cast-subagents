@@ -1,7 +1,7 @@
-<h1 align="center">Cast-Subagents</h1>
+<h1 align="center">Diverter</h1>
 
 <p align="center">
-  <b>Codex usually waits for you to ask. Cast-Subagents speaks up unless native proactive delegation is already active.</b>
+  <b>One task in. The right subagents out.</b>
 </p>
 <p align="center">
   <a href="README.md">English</a> | <a href="README.zh.md">简体中文</a>
@@ -11,35 +11,35 @@
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
   <a href="https://github.com/openai/codex"><img src="https://img.shields.io/badge/OpenAI-Codex-000000?labelColor=555555" alt="OpenAI Codex"></a>
-  <a href="https://github.com/917Dhj/cast-subagents/stargazers"><img src="https://img.shields.io/github/stars/917Dhj/cast-subagents?style=flat" alt="GitHub Stars"></a>
-  <a href="https://github.com/917Dhj/cast-subagents"><img src="https://img.shields.io/badge/Status-Active-brightgreen.svg" alt="Status: Active"></a>
-  <a href="https://github.com/917Dhj/cast-subagents"><img src="https://img.shields.io/badge/PRs-Welcome-brightgreen.svg" alt="PRs Welcome"></a>
+  <a href="https://github.com/917Dhj/diverter/stargazers"><img src="https://img.shields.io/github/stars/917Dhj/diverter?style=flat" alt="GitHub Stars"></a>
+  <a href="https://github.com/917Dhj/diverter"><img src="https://img.shields.io/badge/Status-Active-brightgreen.svg" alt="Status: Active"></a>
+  <a href="https://github.com/917Dhj/diverter"><img src="https://img.shields.io/badge/PRs-Welcome-brightgreen.svg" alt="PRs Welcome"></a>
   <img src="https://img.shields.io/badge/Python-3.11+-blue.svg" alt="Python 3.11+">
 </p>
 
 
 <p align="center">
-  <img src="assets/cast-subagents-hero.png" alt="Cast Subagents hero banner">
+  <img src="assets/diverter-hero.png" alt="Diverter hero banner">
 </p>
-Outside sessions with native proactive delegation, that silence has a cost. Every time a task splits cleanly across multiple lanes — a multi-axis PR review, a codepath-plus-docs verification, an option research with parallel threads — Codex stays in the main thread by default. The user has to notice the opportunity, decide which roles to spawn, and phrase the request clearly enough that Codex follows through. Cast-Subagents handles that recognition step: it spots the task shapes that benefit from delegation and surfaces a lineup suggestion before work begins.
+Outside sessions with native proactive delegation, that silence has a cost. Every time a task splits cleanly across multiple lanes — a multi-axis PR review, a codepath-plus-docs verification, an option research with parallel threads — Codex stays in the main thread by default. The user has to notice the opportunity, decide which roles to spawn, and phrase the request clearly enough that Codex follows through. Diverter handles that recognition step: it spots the task shapes that benefit from delegation and surfaces a lineup suggestion before work begins.
 
 It now recommends specialist lineups for code mapping, review, docs verification, security auditing, test strategy, targeted test automation, Web performance, and pre-ship quality gates.
 
 ## 💬 See It In Action
 
-cast-subagents identifies the task shape, names the lineup and work mode, asks one direct question, then stops. It does not touch the task itself until you say go.
+Diverter identifies the task shape, names the lineup and work mode, asks one direct question, then stops. It does not touch the task itself until you say go.
 
-![Two chat examples showing cast-subagents recommending subagent lineups](assets/cast-subagents-demo-chat.png)
+![Two chat examples showing Diverter recommending subagent lineups](assets/diverter-demo-chat.png)
 
-## 🤔 Why cast-subagents
+## 🤔 Why Diverter
 
 Current Codex behavior has two paths: at most intelligence levels, delegation still requires an explicit request; with Ultra, native proactive delegation can start suitable parallel work automatically. See OpenAI's [subagent documentation](https://learn.chatgpt.com/docs/agent-configuration/subagents).
 
-cast-subagents fills the first path's gap by front-loading the analysis while handing the spawn decision back to you. When higher-priority session policy enables native proactive delegation, cast-subagents silently steps aside — even when explicitly invoked — so native orchestration remains the sole owner.
+Diverter fills the first path's gap by front-loading the analysis while handing the spawn decision back to you. When higher-priority session policy enables native proactive delegation, Diverter silently steps aside — even when explicitly invoked — so native orchestration remains the sole owner.
 
-Some other delegation tools go all the way to automatic spawning after the analysis. cast-subagents stops at the suggestion. That's a deliberate design choice:
+Some other delegation tools go all the way to automatic spawning after the analysis. Diverter stops at the suggestion. That's a deliberate design choice:
 
-| Other auto-spawn tools | cast-subagents |
+| Other auto-spawn tools | Diverter |
 |---|---|
 | Analyze the task, then spawn immediately | Analyze the task, then pause for approval |
 | User sees delegation after the fact | User sees the proposed lineup before anything runs |
@@ -50,17 +50,17 @@ Three reasons this matters in practice:
 
 1. **You keep final say on every spawn.** Subagents multiply token consumption. An advisory step lets you decide case-by-case whether that spend is justified.
 2. **Zero workflow disruption.** Install and keep working the same way. The suggestion appears when it's useful; Codex proceeds normally when it isn't.
-3. **No accidental delegation.** If the main thread would handle something fine on its own, cast-subagents stays silent rather than adding overhead.
+3. **No accidental delegation.** If the main thread would handle something fine on its own, Diverter stays silent rather than adding overhead.
 
 ## 📦 Installation
 
 Tell Codex:
 
 ```
-Fetch and follow instructions from https://raw.githubusercontent.com/917Dhj/cast-subagents/refs/heads/main/.codex/INSTALL.md
+Fetch and follow instructions from https://raw.githubusercontent.com/917Dhj/diverter/refs/heads/main/.codex/INSTALL.md
 ```
 
-The installation guide is the only supported entry point. Codex adds the repository marketplace, installs `cast-subagents@cast-subagents`, shows the complete GPT-5.6 role table, installs your selected roles globally, and then asks you to trust the `SessionStart` Hook. You never need to run the Role Installer yourself. Start a new task after installation.
+The installation guide is the only supported entry point. Codex adds the repository marketplace, installs `diverter@diverter`, shows the complete GPT-5.6 role table, installs your selected roles globally, and then asks you to trust the `SessionStart` Hook. You never need to run the Role Installer yourself. Start a new task after installation.
 
 ## 🎭 Roles & Lineups
 
@@ -85,7 +85,7 @@ The recommended installation set is roles `1,3,6,7,8,9`. The agent-friendly inst
 
 The skill selects capabilities first, then maps them to the roles that are actually available in your Codex environment. If a preferred role is missing, the skill says so explicitly rather than silently substituting.
 
-Specialist roles are not decorative. cast-subagents adds them only when the task contains a concrete independent security, test, performance, or release-risk signal.
+Specialist roles are not decorative. Diverter adds them only when the task contains a concrete independent security, test, performance, or release-risk signal.
 
 ### Common lineups
 
@@ -109,25 +109,25 @@ Specialist examples:
 | Web performance audit with supplied metrics | `web-performance-auditor` | `read-only` |
 | Targeted regression tests | `test-engineer + test-automator + code-mapper` | `mixed` |
 
-The cap is four roles. If a task seems to need more, cast-subagents either compresses the lineup or stays silent rather than padding it out.
+The cap is four roles. If a task seems to need more, Diverter either compresses the lineup or stays silent rather than padding it out.
 
-These role names are compatible with VoltAgent/awesome-codex-subagents and similar community Codex subagent collections. If you use a custom role set, you can adapt `skills/cast-subagents/references/role-lineups.md` to add your own task shape mappings.
+These role names are compatible with VoltAgent/awesome-codex-subagents and similar community Codex subagent collections. If you use a custom role set, you can adapt `skills/diverter/references/role-lineups.md` to add your own task shape mappings.
 
 ## 🔄 Work Modes
 
-**`read-only`** — agents inspect, trace, and report. No files are written. This is the default for review, mapping, research, and verification tasks, and what cast-subagents defaults to when in doubt. Most suggestions use this mode.
+**`read-only`** — agents inspect, trace, and report. No files are written. This is the default for review, mapping, research, and verification tasks, and what Diverter defaults to when in doubt. Most suggestions use this mode.
 
 **`mixed`** — agents start with a read-only pass and pause before any writes. The skill confirms the exploration phase is complete before handing off to a write-capable agent. When you see `mixed` in a suggestion, it means: "we'll dig in first, and I'll check with you before anything changes."
 
-**`write-capable`** — agents may edit files within their assigned scope. cast-subagents uses this only for explicitly write-capable work. Test-writing tasks normally start as `mixed`: `test-engineer` and `code-mapper` clarify the behavior first, then `test-automator` writes targeted tests only when the scope is clear.
+**`write-capable`** — agents may edit files within their assigned scope. Diverter uses this only for explicitly write-capable work. Test-writing tasks normally start as `mixed`: `test-engineer` and `code-mapper` clarify the behavior first, then `test-automator` writes targeted tests only when the scope is clear.
 
 The mode is always stated using one of these three exact labels — you won't see a suggestion without knowing which one applies.
 
 ## 🎯 Decision Rules
 
-### When cast-subagents speaks up
+### When Diverter speaks up
 
-cast-subagents looks for two kinds of signals: core delegation signals, where work splits into independent lanes, and specialist signals, where a concrete risk calls for a focused role.
+Diverter looks for two kinds of signals: core delegation signals, where work splits into independent lanes, and specialist signals, where a concrete risk calls for a focused role.
 
 **Core delegation signals**
 
@@ -193,11 +193,11 @@ cast-subagents looks for two kinds of signals: core delegation signals, where wo
 
 - **Ambiguous request** — if the intent isn't clear enough to build a solid lineup, the skill asks for clarification first.
 
-The Chinese examples above are included intentionally. cast-subagents matches the user's language when writing suggestions; role names and work mode labels remain in English regardless of the prompt language.
+The Chinese examples above are included intentionally. Diverter matches the user's language when writing suggestions; role names and work mode labels remain in English regardless of the prompt language.
 
 ## ⚙️ How It Works
 
-cast-subagents has three parts that work in sequence:
+Diverter has three parts that work in sequence:
 
 - **The `SessionStart` Hook** activates a short advisory gate for the root session. It is restored after startup, resume, clear, and compaction without modifying instruction files.
 - **The skill** is the advisor. It first yields silently when higher-priority session policy enables native proactive delegation. Otherwise, when a suggestion is warranted, it classifies the task shape, selects a lineup of 1–4 roles, determines the work mode, and writes the suggestion message. Then it stops and waits.
@@ -224,7 +224,7 @@ SessionStart Hook activates advisory gate
       └── task has independent lanes
                 │
                 ▼
-          cast-subagents skill
+          Diverter skill
                 │
                 ▼
           classify task shape
@@ -255,7 +255,7 @@ Hard constraints: exactly one lineup, no more than four roles, no task content b
 Once you approve, each agent gets a structured handoff that includes the goal, success criteria, scope boundaries, relevant file paths, write policy, and a verifiable deliverable. Here's what a typical handoff looks like:
 
 ```text
-delegation_context: delegated-subagent; parent approval already completed; do not invoke cast-subagents or request another delegation approval; execute this handoff only
+delegation_context: delegated-subagent; parent approval already completed; do not invoke diverter or request another delegation approval; execute this handoff only
 goal: Map the affected code path for the settings save failure.
 success_criteria: Identify the real execution path, likely failure boundary,
   and the files that own the behavior.
@@ -269,17 +269,17 @@ write_policy: read-only
 open_questions: whether retries or optimistic updates affect the failure mode
 ```
 
-No agent infers scope from context — everything is explicit. The full schema is in `skills/cast-subagents/references/handoff-schema.md`.
+No agent infers scope from context — everything is explicit. The full schema is in `skills/diverter/references/handoff-schema.md`.
 
 ## ❓ FAQ
 
 **Why doesn't it just spawn subagents automatically?**
 
-That's a deliberate design choice, not a limitation. Subagents multiply token consumption, and the right call varies by task. An approval step lets you weigh that cost each time rather than committing to it unconditionally. Other tools in this space make spawning automatic; cast-subagents treats your approval as a required step.
+That's a deliberate design choice, not a limitation. Subagents multiply token consumption, and the right call varies by task. An approval step lets you weigh that cost each time rather than committing to it unconditionally. Other tools in this space make spawning automatic; Diverter treats your approval as a required step.
 
 **What happens when Codex enables native proactive delegation?**
 
-cast-subagents silently steps aside, even when explicitly invoked. It does not suggest a lineup, request approval, or start an execution backend; the native policy owns orchestration for that task.
+Diverter silently steps aside, even when explicitly invoked. It does not suggest a lineup, request approval, or start an execution backend; the native policy owns orchestration for that task.
 
 **Will it slow Codex down on simple tasks?**
 
@@ -287,11 +287,11 @@ No. The `SessionStart` Hook loads the advisory gate once per root session lifecy
 
 **What if I want to skip the suggestion just this once?**
 
-Include a phrase like "do not use subagents" or "no subagents" in your prompt. The gate treats explicit opt-outs as a hard constraint. You can also decline the suggestion when it appears — cast-subagents will continue in the main thread without re-suggesting unless the task materially changes.
+Include a phrase like "do not use subagents" or "no subagents" in your prompt. The gate treats explicit opt-outs as a hard constraint. You can also decline the suggestion when it appears — Diverter will continue in the main thread without re-suggesting unless the task materially changes.
 
 **Does it work with custom subagent collections?**
 
-Yes. The preferred role names are compatible with collections like VoltAgent/awesome-codex-subagents. If you use a custom set, edit `skills/cast-subagents/references/role-lineups.md` to add your own task shape mappings. cast-subagents will use whatever roles are available and say so explicitly when a preferred role is missing.
+Yes. The preferred role names are compatible with collections like VoltAgent/awesome-codex-subagents. If you use a custom set, edit `skills/diverter/references/role-lineups.md` to add your own task shape mappings. Diverter will use whatever roles are available and say so explicitly when a preferred role is missing.
 
 **Does it edit my code?**
 
@@ -299,16 +299,16 @@ The advisory step does not edit code. After approval, an approved write-capable 
 
 **Does it support non-English prompts?**
 
-Yes. cast-subagents matches your language when writing the suggestion. Role names and work mode labels remain in English as exact tokens, but the surrounding message follows the language of your prompt. Chinese is supported out of the box.
+Yes. Diverter matches your language when writing the suggestion. Role names and work mode labels remain in English as exact tokens, but the surrounding message follows the language of your prompt. Chinese is supported out of the box.
 
 **Can I customize which task shapes trigger a suggestion?**
 
-Yes. `skills/cast-subagents/references/decision-rules.md` is the source of truth for task shape classification. `skills/cast-subagents/references/role-lineups.md` controls lineup recommendations. Both are plain Markdown tables — edit them directly to add, remove, or adjust rules. No configuration language to learn.
+Yes. `skills/diverter/references/decision-rules.md` is the source of truth for task shape classification. `skills/diverter/references/role-lineups.md` controls lineup recommendations. Both are plain Markdown tables — edit them directly to add, remove, or adjust rules. No configuration language to learn.
 
 ## 🗂 Project Structure
 
 ```text
-cast-subagents/
+diverter/
 ├── .codex-plugin/
 │   └── plugin.json               # Plugin manifest
 ├── .agents/plugins/
@@ -318,7 +318,7 @@ cast-subagents/
 ├── hooks/
 │   ├── hooks.json                # SessionStart registration
 │   └── session_start.py          # Stateless advisory gate output
-├── skills/cast-subagents/
+├── skills/diverter/
 │   ├── SKILL.md                  # Core advisor skill
 │   └── references/               # Rules, lineups, examples, and handoff schema
 ├── agents/
@@ -355,16 +355,16 @@ The skill's `references/` directory is where substantive policy changes go. `SKI
 
 The always-on gate pattern and session-bootstrap approach in this project were inspired by [obra/superpowers](https://github.com/obra/superpowers). The idea of using a session-bootstrap mechanism to ensure a gate runs before every task came directly from studying that project.
 
-The bundled role pack is a small, curated subset adapted from [VoltAgent/awesome-codex-subagents](https://github.com/VoltAgent/awesome-codex-subagents). It includes only the roles that cast-subagents commonly recommends, with light organization around this skill's decision rules rather than a full mirror of that collection.
+The bundled role pack is a small, curated subset adapted from [VoltAgent/awesome-codex-subagents](https://github.com/VoltAgent/awesome-codex-subagents). It includes only the roles that Diverter commonly recommends, with light organization around this skill's decision rules rather than a full mirror of that collection.
 
-The role design for Staff Engineer review, security auditing, test strategy, and Web performance auditing was informed by [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills). The cast-subagents versions are rewritten for Codex subagent TOML roles and this project's advisory lineup-selection model.
+The role design for Staff Engineer review, security auditing, test strategy, and Web performance auditing was informed by [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills). The Diverter versions are rewritten for Codex subagent TOML roles and this project's advisory lineup-selection model.
 
 ## 🤝 Contributing & License
 
 Issues and pull requests are welcome. The most useful contributions are:
 
-- New task shapes in `skills/cast-subagents/references/decision-rules.md` with a matching lineup in `skills/cast-subagents/references/role-lineups.md`
-- Positive and negative examples in `skills/cast-subagents/references/examples-positive.md` and `skills/cast-subagents/references/examples-negative.md` that ground the new rule in real prompts
+- New task shapes in `skills/diverter/references/decision-rules.md` with a matching lineup in `skills/diverter/references/role-lineups.md`
+- Positive and negative examples in `skills/diverter/references/examples-positive.md` and `skills/diverter/references/examples-negative.md` that ground the new rule in real prompts
 - Eval scenarios in `evals/scenarios.md` that cover edge cases where the current rules produce an unexpected result
 
 When adding a decision rule, the useful test is: can you write a prompt that should trigger it, and a similar-looking prompt that should stay silent? If both are in the example files, the rule is well-scoped.

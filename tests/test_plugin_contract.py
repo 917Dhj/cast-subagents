@@ -16,19 +16,21 @@ class PluginContractTest(unittest.TestCase):
         )
         hooks = json.loads((ROOT / "hooks" / "hooks.json").read_text())
 
-        self.assertEqual(manifest["name"], "cast-subagents")
-        self.assertEqual(manifest["version"], "0.1.0")
+        self.assertEqual(manifest["name"], "diverter")
+        self.assertEqual(manifest["version"], "0.2.0")
+        self.assertEqual(manifest["interface"]["displayName"], "Diverter")
         self.assertEqual(manifest["skills"], "./skills/")
         self.assertNotIn("hooks", manifest)
 
-        self.assertEqual(marketplace["name"], "cast-subagents")
+        self.assertEqual(marketplace["name"], "diverter")
+        self.assertEqual(marketplace["interface"]["displayName"], "Diverter")
         entry = marketplace["plugins"]
         self.assertEqual(len(entry), 1)
-        self.assertEqual(entry[0]["name"], "cast-subagents")
+        self.assertEqual(entry[0]["name"], "diverter")
         self.assertEqual(entry[0]["source"]["source"], "url")
         self.assertEqual(
             entry[0]["source"]["url"],
-            "https://github.com/917Dhj/cast-subagents.git",
+            "https://github.com/917Dhj/diverter.git",
         )
         self.assertEqual(entry[0]["source"]["ref"], "main")
         self.assertEqual(entry[0]["policy"]["installation"], "AVAILABLE")
@@ -52,10 +54,10 @@ class PluginContractTest(unittest.TestCase):
         )
         self.assertIn("Subagent Advisory Gate", result.stdout)
         self.assertIn("delegation_context: delegated-subagent", result.stdout)
-        self.assertIn("invoke `$cast-subagents` first", result.stdout)
+        self.assertIn("invoke `$diverter` first", result.stdout)
 
     def test_bundled_skill_is_the_only_skill_entry_and_selects_a_backend(self) -> None:
-        skill_path = ROOT / "skills" / "cast-subagents" / "SKILL.md"
+        skill_path = ROOT / "skills" / "diverter" / "SKILL.md"
         skill = skill_path.read_text()
 
         self.assertTrue(skill_path.is_file())
@@ -80,7 +82,7 @@ class PluginContractTest(unittest.TestCase):
         self.assertIn("delegation_context: delegated-subagent", skill)
 
     def test_bundled_skill_silently_defers_to_native_proactive_delegation(self) -> None:
-        skill = (ROOT / "skills" / "cast-subagents" / "SKILL.md").read_text()
+        skill = (ROOT / "skills" / "diverter" / "SKILL.md").read_text()
 
         start = skill.index("<NATIVE-PROACTIVE-DELEGATION-STOP>")
         end = skill.index("</NATIVE-PROACTIVE-DELEGATION-STOP>")
@@ -90,13 +92,13 @@ class PluginContractTest(unittest.TestCase):
         self.assertIn("higher-priority session instructions", stop)
         self.assertIn("proactive multi-agent delegation is active", stop)
         self.assertIn("even when explicitly invoked", stop)
-        self.assertIn("Do not mention Cast Subagents", stop)
+        self.assertIn("Do not mention Diverter", stop)
         self.assertIn("Continue the current task under the native policy", stop)
         self.assertNotIn("gpt-5.6-sol", stop)
         self.assertNotIn("Ultra", stop)
 
     def test_bundled_skill_resolves_cli_runner_from_its_file_path(self) -> None:
-        skill_path = ROOT / "skills" / "cast-subagents" / "SKILL.md"
+        skill_path = ROOT / "skills" / "diverter" / "SKILL.md"
         skill = skill_path.read_text()
         plugin_root = skill_path.parents[2]
 
@@ -108,8 +110,9 @@ class PluginContractTest(unittest.TestCase):
     def test_install_guide_has_one_plugin_only_flow(self) -> None:
         guide = (ROOT / ".codex" / "INSTALL.md").read_text()
 
-        self.assertIn("codex plugin marketplace add 917Dhj/cast-subagents", guide)
-        self.assertIn("codex plugin add cast-subagents@cast-subagents", guide)
+        self.assertIn("codex plugin marketplace add 917Dhj/diverter", guide)
+        self.assertIn("codex plugin add diverter@diverter", guide)
+        self.assertIn("DIVERTER_PLUGIN", guide)
         self.assertIn("/hooks", guide)
         self.assertIn("install-agent-roles.py", guide)
         self.assertIn("Python 3.11", guide)

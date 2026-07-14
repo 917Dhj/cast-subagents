@@ -114,7 +114,7 @@ print("worker stdout")
             )
             self.assertIn("Map the requested code path.", call["stdin"])
             self.assertIn("delegation_context: delegated-subagent", call["stdin"])
-            self.assertIn("do not invoke cast-subagents", call["stdin"].lower())
+            self.assertIn("do not invoke diverter", call["stdin"].lower())
             self.assertIn(handoff, call["stdin"])
 
     def test_propagates_worker_failure_and_stderr(self) -> None:

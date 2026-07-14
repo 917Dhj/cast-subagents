@@ -15,7 +15,7 @@
 
 | Check | Result | Pass? |
 | --- | --- | --- |
-| `cast-subagents` visible |  |  |
+| `diverter` visible |  |  |
 | No skill load errors |  |  |
 
 ## Summary

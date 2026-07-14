@@ -1,14 +1,14 @@
 {
-  "name": "cast-subagents",
+  "name": "diverter",
   "interface": {
-    "displayName": "Cast Subagents"
+    "displayName": "Diverter"
   },
   "plugins": [
     {
-      "name": "cast-subagents",
+      "name": "diverter",
       "source": {
         "source": "url",
-        "url": "https://github.com/917Dhj/cast-subagents.git",
+        "url": "https://github.com/917Dhj/diverter.git",
         "ref": "main"
       },
       "policy": {

@@ -4,6 +4,12 @@
 
 - No unreleased changes.
 
+## 0.2.0 - 2026-07-14
+
+- Rename the product and all active technical identifiers to Diverter.
+- Replace the README hero artwork and adopt the new bilingual tagline.
+- Preserve the approval-before-delegation behavior.
+
 ## 0.1.0 - 2026-07-14
 
 - Distribute Cast Subagents as a single-repository Codex plugin and marketplace.

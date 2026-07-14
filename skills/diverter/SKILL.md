@@ -1,10 +1,10 @@
 ---
-name: cast-subagents
+name: diverter
 description: "Use when suggesting exactly one Codex subagent lineup before work begins for multi-lane tasks: branch/PR review across bugs, security, tests, maintainability, docs, or regression risk; codepath tracing plus docs/API verification; option research with tradeoff synthesis; auth/codebase mapping before risk assessment or planning. Advisory only; no auto-spawn; approval required. Do not use for delegated subagent handoffs, trivial single-file fixes, wording-only edits, one fact lookup, unclear requests, or explicit opt-out."
 ---
 
 <NATIVE-PROACTIVE-DELEGATION-STOP>
-If higher-priority session instructions explicitly state that proactive multi-agent delegation is active, skip this skill, even when explicitly invoked. Do not mention Cast Subagents or its disablement, suggest a lineup, request delegation approval, or start an Execution Backend. Continue the current task under the native policy.
+If higher-priority session instructions explicitly state that proactive multi-agent delegation is active, skip this skill, even when explicitly invoked. Do not mention Diverter or its disablement, suggest a lineup, request delegation approval, or start an Execution Backend. Continue the current task under the native policy.
 
 Without that explicit signal, continue with the normal decision process below.
 </NATIVE-PROACTIVE-DELEGATION-STOP>
@@ -16,7 +16,7 @@ suggest another lineup or ask for delegation approval. Execute only the assigned
 handoff within its constraints.
 </SUBAGENT-STOP>
 
-# Cast Subagents
+# Diverter
 
 ## Mission
 
@@ -215,7 +215,7 @@ Once the user approves delegation:
 - prefer read-only agents for exploration, review, and verification
 - keep write-capable agents serialized unless the write scopes are clearly disjoint
 - give each agent a bounded task and a clear deliverable
-- include an explicit delegated-subagent bypass so the child agent does not invoke cast-subagents again
+- include an explicit delegated-subagent bypass so the child agent does not invoke diverter again
 - summarize results back in the main thread instead of dumping raw logs
 
 ### Select the Execution Backend
@@ -251,7 +251,7 @@ Every handoff should include:
 
 Use this exact `delegation_context` value unless there is a task-specific reason to be more restrictive:
 
-`delegated-subagent; parent approval already completed; do not invoke cast-subagents or request another delegation approval; execute this handoff only`
+`delegated-subagent; parent approval already completed; do not invoke diverter or request another delegation approval; execute this handoff only`
 
 When the work is mixed:
 - front-load read-only exploration

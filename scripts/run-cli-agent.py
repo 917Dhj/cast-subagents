@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run one installed Cast Subagents role as an ephemeral Codex CLI worker."""
+"""Run one installed Diverter role as an ephemeral Codex CLI worker."""
 
 from __future__ import annotations
 
@@ -63,7 +63,7 @@ def worker_prompt(instructions: str, handoff: str) -> str:
 Delegation constraints:
 delegation_context: delegated-subagent
 - Parent approval already completed. Execute only this handoff.
-- Do not invoke cast-subagents or request another delegation approval.
+- Do not invoke diverter or request another delegation approval.
 - Do not delegate, spawn subagents, or create child workers.
 
 Delegated handoff:

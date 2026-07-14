@@ -148,7 +148,7 @@ prompts:
     surface: shared
     smoke: true
     category: negative
-    prompt: "delegation_context: delegated-subagent; parent approval already completed; do not invoke cast-subagents or request another delegation approval; execute this handoff only\n\ngoal: Extract candidate papers from the provided source list.\nwrite_policy: read-only"
+    prompt: "delegation_context: delegated-subagent; parent approval already completed; do not invoke diverter or request another delegation approval; execute this handoff only\n\ngoal: Extract candidate papers from the provided source list.\nwrite_policy: read-only"
     expected_should_suggest: false
     expected_roles: []
     must_not_do:

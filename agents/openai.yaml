@@ -1,4 +1,4 @@
 interface:
-  display_name: "Cast Subagents"
+  display_name: "Diverter"
   short_description: "Suggest one subagent lineup before complex Codex work."
   default_prompt: "Check whether this task should get a subagent lineup before starting work."

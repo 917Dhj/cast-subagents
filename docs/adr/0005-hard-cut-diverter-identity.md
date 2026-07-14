@@ -1,0 +1,3 @@
+# Hard-cut the product identity to Diverter
+
+The product is renamed from Cast Subagents to Diverter in `v0.2.0`, before broader adoption. Public branding and every technical identifier—including the repository, plugin, marketplace, skill, invocation path, environment variable, and assets—move to `diverter` without a compatibility alias; existing `v0.1.0` users must reinstall, because carrying the deprecated identity costs more than an early clean break. The former name may remain only in the `v0.1.0` changelog entry and this migration record; this rename does not change the approval-before-delegation behavior, and automatic agent startup remains future work.

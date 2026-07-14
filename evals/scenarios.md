@@ -23,12 +23,12 @@ Confirm the bundled skill is visible:
 
 ```bash
 CODEX_HOME=/tmp/codex-subagent-eval/skill \
-codex debug prompt-input | rg "cast-subagents"
+codex debug prompt-input | rg "diverter"
 ```
 
 Pass condition:
 
-- `cast-subagents` appears
+- `diverter` appears
 - no `failed to load skill` error appears
 
 ## CLI Baseline
@@ -105,9 +105,9 @@ Manual setup:
 1. Enable this repository as a Codex plugin.
 2. Confirm the plugin manifest points at `skills/`.
 3. Start a new Codex Desktop session.
-4. Verify that `cast-subagents` is visible in the available skills list.
+4. Verify that `diverter` is visible in the available skills list.
 5. Run the prompt subset.
-6. Verify that wording matches [../skills/cast-subagents/references/suggestion-contract.md](../skills/cast-subagents/references/suggestion-contract.md).
+6. Verify that wording matches [../skills/diverter/references/suggestion-contract.md](../skills/diverter/references/suggestion-contract.md).
 
 ## Two-Step Approval-Gate Checks
 

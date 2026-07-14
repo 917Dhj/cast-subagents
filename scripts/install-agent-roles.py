@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install bundled Cast Subagents role definitions."""
+"""Install bundled Diverter role definitions."""
 
 from __future__ import annotations
 

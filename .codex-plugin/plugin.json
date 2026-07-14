@@ -1,13 +1,13 @@
 {
-  "name": "cast-subagents",
-  "version": "0.1.0",
+  "name": "diverter",
+  "version": "0.2.0",
   "description": "Suggest one specialist subagent lineup before complex Codex work and preserve role settings across execution backends.",
   "author": {
     "name": "917Dhj",
     "url": "https://github.com/917Dhj"
   },
-  "homepage": "https://github.com/917Dhj/cast-subagents",
-  "repository": "https://github.com/917Dhj/cast-subagents",
+  "homepage": "https://github.com/917Dhj/diverter",
+  "repository": "https://github.com/917Dhj/diverter",
   "license": "MIT",
   "keywords": [
     "codex",
@@ -17,7 +17,7 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Cast Subagents",
+    "displayName": "Diverter",
     "shortDescription": "Suggest one specialist lineup before complex Codex work",
     "longDescription": "Advises when a Codex task benefits from specialist subagents, waits for approval, and preserves bundled role settings when native spawning is unavailable.",
     "developerName": "917Dhj",
@@ -27,7 +27,7 @@
       "Read",
       "Write"
     ],
-    "websiteURL": "https://github.com/917Dhj/cast-subagents",
+    "websiteURL": "https://github.com/917Dhj/diverter",
     "defaultPrompt": [
       "Check whether this task should use a specialist subagent lineup."
     ]

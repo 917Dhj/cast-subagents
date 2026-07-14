@@ -1,6 +1,6 @@
-# Installing Cast Subagents for Codex
+# Installing Diverter for Codex
 
-Cast Subagents is a Codex plugin that suggests one specialist lineup before complex work, waits for approval, and preserves bundled role settings across native and CLI execution backends.
+Diverter is a Codex plugin that suggests one specialist lineup before complex work, waits for approval, and preserves bundled role settings across native and CLI execution backends.
 
 This file is the only supported installation entry. Follow it as one agent-led flow; do not ask the user to run the role installer manually.
 
@@ -14,16 +14,16 @@ This file is the only supported installation entry. Follow it as one agent-led f
 ### 1. Add the repository marketplace
 
 ```bash
-codex plugin marketplace add 917Dhj/cast-subagents
+codex plugin marketplace add 917Dhj/diverter
 ```
 
 ### 2. Install the plugin
 
 ```bash
-codex plugin add cast-subagents@cast-subagents --json
+codex plugin add diverter@diverter --json
 ```
 
-Keep the returned `installedPath`; use that exact absolute path as `CAST_SUBAGENTS_PLUGIN` below. Do not infer a versioned cache directory because Git-backed marketplace plugins may use `local` as their cache version.
+Keep the returned `installedPath`; use that exact absolute path as `DIVERTER_PLUGIN` below. Do not infer a versioned cache directory because Git-backed marketplace plugins may use `local` as their cache version.
 
 ### 3. Choose the global Bundled Subagents
 
@@ -53,16 +53,16 @@ Otherwise ask for `recommended`, `all`, or a custom role selection. Interpret th
 
 ### 4. Run the Role Installer for the user
 
-Set `CAST_SUBAGENTS_PLUGIN` to the exact `installedPath` returned in step 2. For example:
+Set `DIVERTER_PLUGIN` to the exact `installedPath` returned in step 2. For example:
 
 ```bash
-CAST_SUBAGENTS_PLUGIN="/absolute/path/from/the-installedPath-field"
+DIVERTER_PLUGIN="/absolute/path/from/the-installedPath-field"
 ```
 
 Run the installer with `--overwrite` and one `--role` per selected role. For the recommended set:
 
 ```bash
-python3 "$CAST_SUBAGENTS_PLUGIN/scripts/install-agent-roles.py" --overwrite \
+python3 "$DIVERTER_PLUGIN/scripts/install-agent-roles.py" --overwrite \
   --role code-mapper \
   --role docs-researcher \
   --role reviewer \
@@ -75,14 +75,14 @@ The installer writes only to the global Agent directory under the effective Code
 
 ### 5. Trust the SessionStart Hook
 
-After the selected roles are installed, tell the user to open `/hooks`, review the Cast Subagents `SessionStart` command, and trust it before starting a new Codex task. Do not pause role installation while waiting for Hook trust. Codex's normal warning and fail-open behavior applies when the Hook is untrusted, skipped, times out, or fails.
+After the selected roles are installed, tell the user to open `/hooks`, review the Diverter `SessionStart` command, and trust it before starting a new Codex task. Do not pause role installation while waiting for Hook trust. Codex's normal warning and fail-open behavior applies when the Hook is untrusted, skipped, times out, or fails.
 
 ### 6. Verify and restart
 
 Verify the plugin and selected roles:
 
 ```bash
-test -f "$CAST_SUBAGENTS_PLUGIN/skills/cast-subagents/SKILL.md"
+test -f "$DIVERTER_PLUGIN/skills/diverter/SKILL.md"
 test -f "${CODEX_HOME:-$HOME/.codex}/agents/code-mapper.toml"
 ```
 
@@ -93,8 +93,8 @@ Tell the user to start a new Codex task. The trusted `SessionStart` Hook and new
 Refresh the marketplace and reinstall the plugin:
 
 ```bash
-codex plugin marketplace upgrade cast-subagents
-codex plugin add cast-subagents@cast-subagents --json
+codex plugin marketplace upgrade diverter
+codex plugin add diverter@diverter --json
 ```
 
 Use the newly returned `installedPath`. Repeat the role selection and run the current release's Role Installer so selected global roles receive the new definitions. After the roles are installed, if Codex marks the changed Hook for review, ask the user to repeat `/hooks` trust before starting a new task.
