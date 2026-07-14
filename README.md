@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/diverter-hero-figure.png" alt="Diverter agent lineup" width="720">
+  <img src="assets/diverter-hero-figure.png" alt="Diverter agent lineup" width="640">
 </p>
 
 <h1 align="center">Diverter</h1>
@@ -19,7 +19,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/diverter-hero-tagline.png" alt="One task in. The right subagents out." width="560">
+  <img src="assets/diverter-hero-tagline.png" alt="One task in. The right subagents out." width="480">
 </p>
 
 Outside sessions with native proactive delegation, that silence has a cost. Every time a task splits cleanly across multiple lanes — a multi-axis PR review, a codepath-plus-docs verification, an option research with parallel threads — Codex stays in the main thread by default. The user has to notice the opportunity, decide which roles to spawn, and phrase the request clearly enough that Codex follows through. Diverter handles that recognition step: it spots the task shapes that benefit from delegation and surfaces a lineup suggestion before work begins.
