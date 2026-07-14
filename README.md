@@ -60,7 +60,7 @@ Tell Codex:
 Fetch and follow instructions from https://raw.githubusercontent.com/917Dhj/cast-subagents/refs/heads/main/.codex/INSTALL.md
 ```
 
-The installation guide is the only supported entry point. Codex adds the repository marketplace, installs `cast-subagents@cast-subagents`, asks you to trust the `SessionStart` Hook, shows the complete GPT-5.6 role table, and installs your selected roles globally. You never need to run the Role Installer yourself. Start a new task after installation.
+The installation guide is the only supported entry point. Codex adds the repository marketplace, installs `cast-subagents@cast-subagents`, shows the complete GPT-5.6 role table, installs your selected roles globally, and then asks you to trust the `SessionStart` Hook. You never need to run the Role Installer yourself. Start a new task after installation.
 
 ## 🎭 Roles & Lineups
 

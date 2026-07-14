@@ -91,6 +91,19 @@ class PluginContractTest(unittest.TestCase):
         self.assertNotIn("install-agents-gate.py", guide)
         self.assertNotIn("--scope", guide)
 
+        install_order = (
+            "### 2. Install the plugin",
+            "### 3. Choose the global Bundled Subagents",
+            "### 4. Run the Role Installer for the user",
+            "### 5. Trust the SessionStart Hook",
+            "### 6. Verify and restart",
+        )
+        positions = [guide.index(heading) for heading in install_order]
+        self.assertEqual(positions, sorted(positions))
+
+        updating = guide.split("## Updating", 1)[1]
+        self.assertLess(updating.index("Role Installer"), updating.index("/hooks"))
+
         for readme_name in ("README.md", "README.zh.md"):
             readme = (ROOT / readme_name).read_text()
             self.assertNotIn("npx skills", readme, readme_name)

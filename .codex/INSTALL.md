@@ -25,11 +25,7 @@ codex plugin add cast-subagents@cast-subagents --json
 
 Keep the returned `installedPath`; use that exact absolute path as `CAST_SUBAGENTS_PLUGIN` below. Do not infer a versioned cache directory because Git-backed marketplace plugins may use `local` as their cache version.
 
-### 3. Trust the SessionStart Hook
-
-Tell the user to open `/hooks`, review the Cast Subagents `SessionStart` command, and trust it. Wait for confirmation before continuing. Codex's normal warning and fail-open behavior applies when the Hook is untrusted, skipped, times out, or fails.
-
-### 4. Choose the global Bundled Subagents
+### 3. Choose the global Bundled Subagents
 
 Show this complete table before asking which roles to install. Role numbers are stable and must not be reassigned.
 
@@ -55,7 +51,7 @@ If `request_user_input` is available, ask one structured question with these opt
 
 Otherwise ask for `recommended`, `all`, or a custom role selection. Interpret the choice naturally, deduplicate it, and ask one concise follow-up only when the selection is unclear.
 
-### 5. Run the Role Installer for the user
+### 4. Run the Role Installer for the user
 
 Set `CAST_SUBAGENTS_PLUGIN` to the exact `installedPath` returned in step 2. For example:
 
@@ -77,6 +73,10 @@ python3 "$CAST_SUBAGENTS_PLUGIN/scripts/install-agent-roles.py" --overwrite \
 
 The installer writes only to the global Agent directory under the effective Codex home.
 
+### 5. Trust the SessionStart Hook
+
+After the selected roles are installed, tell the user to open `/hooks`, review the Cast Subagents `SessionStart` command, and trust it before starting a new Codex task. Do not pause role installation while waiting for Hook trust. Codex's normal warning and fail-open behavior applies when the Hook is untrusted, skipped, times out, or fails.
+
 ### 6. Verify and restart
 
 Verify the plugin and selected roles:
@@ -97,4 +97,4 @@ codex plugin marketplace upgrade cast-subagents
 codex plugin add cast-subagents@cast-subagents --json
 ```
 
-Use the newly returned `installedPath`. If Codex marks the changed Hook for review, repeat `/hooks` trust. Then repeat the role selection and run the current release's Role Installer so selected global roles receive the new definitions.
+Use the newly returned `installedPath`. Repeat the role selection and run the current release's Role Installer so selected global roles receive the new definitions. After the roles are installed, if Codex marks the changed Hook for review, ask the user to repeat `/hooks` trust before starting a new task.
