@@ -114,6 +114,7 @@ print("worker stdout")
             )
             self.assertIn("Map the requested code path.", call["stdin"])
             self.assertIn("delegation_context: delegated-subagent", call["stdin"])
+            self.assertIn("Parent Dispatch Authorization already granted", call["stdin"])
             self.assertIn("do not invoke diverter", call["stdin"].lower())
             self.assertIn(handoff, call["stdin"])
 

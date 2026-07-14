@@ -62,8 +62,8 @@ def worker_prompt(instructions: str, handoff: str) -> str:
 
 Delegation constraints:
 delegation_context: delegated-subagent
-- Parent approval already completed. Execute only this handoff.
-- Do not invoke diverter or request another delegation approval.
+- Parent Dispatch Authorization already granted. Execute only this handoff.
+- Do not invoke diverter or request another Dispatch Authorization.
 - Do not delegate, spawn subagents, or create child workers.
 
 Delegated handoff:

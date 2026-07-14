@@ -4,6 +4,14 @@
 
 - No unreleased changes.
 
+## 0.3.0 - 2026-07-15
+
+- Add persistent user-level `ask` and `auto` delegation policies, defaulting new installations to `ask`.
+- Add the explicit `$diverter-mode` skill for policy status and changes.
+- Load the saved policy through the `SessionStart` Hook on startup, resume, clear, and compaction.
+- Let `auto` announce and immediately dispatch suitable `read-only`, `mixed`, and `write-capable` work without weakening existing permissions or write boundaries.
+- Update installation guidance, delegation contracts, and focused evaluation coverage for both policies.
+
 ## 0.2.0 - 2026-07-14
 
 - Rename the product and all active technical identifiers to Diverter.

@@ -1,6 +1,6 @@
 # Installing Diverter for Codex
 
-Diverter is a Codex plugin that suggests one specialist lineup before complex work, waits for approval, and preserves bundled role settings across native and CLI execution backends.
+Diverter is a Codex plugin that routes suitable complex work to one specialist lineup under a user-level `ask` or `auto` Delegation Policy while preserving bundled role settings across native and CLI execution backends.
 
 This file is the only supported installation entry. Follow it as one agent-led flow; do not ask the user to run the role installer manually.
 
@@ -73,20 +73,49 @@ python3 "$DIVERTER_PLUGIN/scripts/install-agent-roles.py" --overwrite \
 
 The installer writes only to the global Agent directory under the effective Codex home.
 
-### 5. Trust the SessionStart Hook
+### 5. Initialize the Delegation Policy
+
+Initialize Diverter's user-level configuration:
+
+```bash
+python3 "$DIVERTER_PLUGIN/scripts/diverter-mode.py" init
+```
+
+On a fresh installation this creates the `ask` policy. On update or reinstall it preserves an existing valid `ask` or `auto` policy. If it reports `invalid_config`, stop and tell the user that the existing configuration was not overwritten.
+
+### 6. Trust the SessionStart Hook
 
 After the selected roles are installed, tell the user to open `/hooks`, review the Diverter `SessionStart` command, and trust it before starting a new Codex task. Do not pause role installation while waiting for Hook trust. Codex's normal warning and fail-open behavior applies when the Hook is untrusted, skipped, times out, or fails.
 
-### 6. Verify and restart
+### 7. Verify and finish
 
 Verify the plugin and selected roles:
 
 ```bash
 test -f "$DIVERTER_PLUGIN/skills/diverter/SKILL.md"
+test -f "$DIVERTER_PLUGIN/skills/diverter-mode/SKILL.md"
 test -f "${CODEX_HOME:-$HOME/.codex}/agents/code-mapper.toml"
+test -f "${CODEX_HOME:-$HOME/.codex}/diverter/config.json"
 ```
 
-Tell the user to start a new Codex task. The trusted `SessionStart` Hook and newly installed roles are loaded in the new task.
+End with the following fixed structure, translated into the user's language when needed. Keep commands and policy names exact:
+
+```text
+Diverter is installed in `ask` mode.
+
+Before using it, open `/hooks`, review Diverter's `SessionStart` Hook,
+and trust it. Then start or reopen a task.
+
+- `ask` — proposes one lineup and waits for approval.
+- `auto` — announces one lineup and dispatches it immediately for any Work Mode.
+
+Change the mode with:
+- `$diverter-mode auto`
+- `$diverter-mode ask`
+- `$diverter-mode status`
+
+Mode changes apply at the next `SessionStart`.
+```
 
 ## Updating
 
@@ -97,4 +126,4 @@ codex plugin marketplace upgrade diverter
 codex plugin add diverter@diverter --json
 ```
 
-Use the newly returned `installedPath`. Repeat the role selection and run the current release's Role Installer so selected global roles receive the new definitions. After the roles are installed, if Codex marks the changed Hook for review, ask the user to repeat `/hooks` trust before starting a new task.
+Use the newly returned `installedPath`. Repeat the role selection and run the current release's Role Installer so selected global roles receive the new definitions. Run the Delegation Policy `init` command; it preserves an existing valid policy. If Codex marks the changed Hook for review, ask the user to repeat `/hooks` trust before starting a new task. Report the policy returned by `init` rather than assuming it is `ask`.

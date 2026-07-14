@@ -148,14 +148,14 @@ prompts:
     surface: shared
     smoke: true
     category: negative
-    prompt: "delegation_context: delegated-subagent; parent approval already completed; do not invoke diverter or request another delegation approval; execute this handoff only\n\ngoal: Extract candidate papers from the provided source list.\nwrite_policy: read-only"
+    prompt: "delegation_context: delegated-subagent; parent Dispatch Authorization already granted; do not invoke diverter or request another Dispatch Authorization; execute this handoff only\n\ngoal: Extract candidate papers from the provided source list.\nwrite_policy: read-only"
     expected_should_suggest: false
     expected_roles: []
     must_not_do:
       - suggest another subagent lineup
-      - ask for delegation approval again
+      - request another Dispatch Authorization
       - ignore the assigned handoff
-    notes: "Delegated subagent handoff must execute directly instead of recursing into advisory mode."
+    notes: "Delegated subagent handoff must execute directly instead of recursing into Diverter."
 
   - id: edge-01
     surface: cli
@@ -349,3 +349,70 @@ prompts:
       - invent a concrete security scope
       - suggest a security lineup before clarifying
     notes: "Security buzzword only."
+
+  - id: auto-pos-01
+    policy: auto
+    surface: shared
+    smoke: true
+    category: positive
+    prompt: "Review this branch against main for correctness, security boundaries, and missing tests."
+    expected_should_suggest: true
+    expected_should_dispatch: true
+    expected_roles: [reviewer, code-mapper]
+    must_do:
+      - announce one lineup and the work mode
+      - dispatch without asking a permission question
+    notes: "Canonical automatic read-only dispatch."
+
+  - id: auto-pos-02
+    policy: auto
+    surface: cli
+    smoke: true
+    category: positive
+    prompt: "Add targeted regression tests for the settings save bug, but first map the exact behavior boundary."
+    expected_should_suggest: true
+    expected_should_dispatch: true
+    expected_roles: [test-engineer, test-automator, code-mapper]
+    must_do:
+      - announce mixed work
+      - keep write-capable work bounded and serialized unless paths are disjoint
+    notes: "Automatic policy applies to mixed work."
+
+  - id: auto-neg-01
+    policy: auto
+    surface: shared
+    smoke: true
+    category: negative
+    prompt: "Fix this typo in the README."
+    expected_should_suggest: false
+    expected_should_dispatch: false
+    expected_roles: []
+    must_not_do:
+      - add delegation overhead
+    notes: "Auto does not weaken the delegation threshold."
+
+  - id: auto-neg-02
+    policy: auto
+    surface: shared
+    smoke: true
+    category: negative
+    prompt: "Review the auth flow, but do not use subagents for this task."
+    expected_should_suggest: false
+    expected_should_dispatch: false
+    expected_roles: []
+    must_not_do:
+      - override the explicit opt-out
+    notes: "Task opt-out wins over the saved auto policy."
+
+  - id: auto-edge-01
+    policy: auto
+    surface: shared
+    smoke: true
+    category: edge
+    prompt: "$diverter-mode status"
+    expected_should_suggest: false
+    expected_should_dispatch: false
+    expected_roles: []
+    must_do:
+      - bypass the core delegation gate
+    notes: "Mode Control is handled directly by the root agent."

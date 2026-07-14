@@ -6,7 +6,7 @@ Choose capabilities first. Then keep only the roles that are available in the cu
 
 | Capability | Preferred bundled role | Use when | Missing-role behavior |
 | --- | --- | --- | --- |
-| code mapping | `code-mapper` | tracing code paths, ownership, or execution flow | Drop the capability or handle mapping in the main thread after approval. |
+| code mapping | `code-mapper` | tracing code paths, ownership, or execution flow | Drop the capability or handle mapping in the main thread after Dispatch Authorization. |
 | code review | `reviewer` | general PR review, correctness, maintainability, contracts, regressions, and light security/test risk | Handle in the main thread or use another explicit review role if one is available. |
 | security audit | `security-auditor` | auth, authorization, secrets, user input, webhooks, SSRF, dependencies, LLM/tool permissions, or exploitable vulnerability risk | Mention that security audit is not delegated; do not substitute a generic reviewer when security is central. |
 | docs/API verification | `docs-researcher` | verifying documented API/framework behavior | Mention that docs verification is not delegated; do not substitute an unknown role. |
@@ -42,7 +42,7 @@ Choose capabilities first. Then keep only the roles that are available in the cu
 - Recommend exactly one lineup made only of available roles.
 - Prefer 2 roles over 3 when the task can still be answered well.
 - If one unavailable capability is non-essential, drop it and keep the remaining useful lineup.
-- If a missing capability is important, mention that the main thread can cover it after approval.
+- If a missing capability is important, mention that the main thread can cover it after Dispatch Authorization.
 - If no relevant roles are available, stay silent during implicit checks and continue normally.
 - Never recommend 4 roles only to sound thorough.
 - Ordinary PR review defaults to `reviewer + code-mapper`; do not add every quality specialist.
@@ -56,5 +56,5 @@ Choose capabilities first. Then keep only the roles that are available in the cu
 ## Write-Safety Rules
 
 - `test-automator` is write-capable because it may edit tests.
-- Mixed lineups should start with read-only work and pause before `test-automator` writes.
+- Mixed lineups should start with read-only work. Under `ask`, pause before `test-automator` writes unless the user authorized the full mixed sequence; under `auto`, continue once the read-only scope is clear.
 - Do not suggest write-capable implementation work unless an explicit write-capable role for that work is available.

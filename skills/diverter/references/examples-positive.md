@@ -1,6 +1,6 @@
 # Positive Examples
 
-These are examples that should usually trigger a subagent suggestion.
+These are examples that should usually trigger delegation.
 
 ## English
 

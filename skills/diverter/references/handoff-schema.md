@@ -4,7 +4,7 @@ Every delegated task should use the same minimum payload shape.
 
 | Field | Required content | Why it exists | Good example |
 | --- | --- | --- | --- |
-| `delegation_context` | the explicit delegated-subagent bypass | prevents recursive advisory gates | `delegated-subagent; parent approval already completed; do not invoke diverter or request another delegation approval; execute this handoff only` |
+| `delegation_context` | the explicit delegated-subagent bypass | prevents recursive Delegation Gates | `delegated-subagent; parent Dispatch Authorization already granted; do not invoke diverter or request another Dispatch Authorization; execute this handoff only` |
 | `goal` | the exact sub-problem the agent owns | prevents scope drift | `Map the auth failure path for the save-settings flow.` |
 | `success_criteria` | what counts as done | keeps the result verifiable | `Return the real call path, owning files, and likely failure boundary.` |
 | `scope_in` | what is in scope | defines ownership | `settings modal save path, client mutation, API handler` |
@@ -19,7 +19,7 @@ Every delegated task should use the same minimum payload shape.
 Recommended Markdown template:
 
 ```md
-delegation_context: delegated-subagent; parent approval already completed; do not invoke diverter or request another delegation approval; execute this handoff only
+delegation_context: delegated-subagent; parent Dispatch Authorization already granted; do not invoke diverter or request another Dispatch Authorization; execute this handoff only
 goal: Map the affected code path for the settings save failure.
 success_criteria: Identify the real execution path, likely failure boundary, and the files that own the behavior.
 scope_in: settings modal, client mutation, API route, response handling

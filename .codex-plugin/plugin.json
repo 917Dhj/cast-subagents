@@ -1,7 +1,7 @@
 {
   "name": "diverter",
-  "version": "0.2.0",
-  "description": "Suggest one specialist subagent lineup before complex Codex work and preserve role settings across execution backends.",
+  "version": "0.3.0",
+  "description": "Route complex Codex work to one specialist subagent lineup under an ask or auto delegation policy.",
   "author": {
     "name": "917Dhj",
     "url": "https://github.com/917Dhj"
@@ -18,8 +18,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Diverter",
-    "shortDescription": "Suggest one specialist lineup before complex Codex work",
-    "longDescription": "Advises when a Codex task benefits from specialist subagents, waits for approval, and preserves bundled role settings when native spawning is unavailable.",
+    "shortDescription": "Route complex work to one specialist lineup",
+    "longDescription": "Selects a specialist subagent lineup for suitable Codex tasks, then asks for approval or dispatches automatically under the user's delegation policy.",
     "developerName": "917Dhj",
     "category": "Productivity",
     "capabilities": [
@@ -29,7 +29,7 @@
     ],
     "websiteURL": "https://github.com/917Dhj/Diverter",
     "defaultPrompt": [
-      "Check whether this task should use a specialist subagent lineup."
+      "Route this task to a specialist subagent lineup when useful."
     ]
   }
 }

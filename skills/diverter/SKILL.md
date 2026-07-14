@@ -1,10 +1,10 @@
 ---
 name: diverter
-description: "Use when suggesting exactly one Codex subagent lineup before work begins for multi-lane tasks: branch/PR review across bugs, security, tests, maintainability, docs, or regression risk; codepath tracing plus docs/API verification; option research with tradeoff synthesis; auth/codebase mapping before risk assessment or planning. Advisory only; no auto-spawn; approval required. Do not use for delegated subagent handoffs, trivial single-file fixes, wording-only edits, one fact lookup, unclear requests, or explicit opt-out."
+description: "Use when routing multi-lane Codex tasks to exactly one specialist subagent lineup: branch/PR review across bugs, security, tests, maintainability, docs, or regression risk; codepath tracing plus docs/API verification; option research with tradeoff synthesis; auth/codebase mapping before risk assessment or planning. Apply the loaded ask or auto Delegation Policy. Do not use for Mode Control, delegated subagent handoffs, trivial single-file fixes, wording-only edits, one fact lookup, unclear requests, or explicit opt-out."
 ---
 
 <NATIVE-PROACTIVE-DELEGATION-STOP>
-If higher-priority session instructions explicitly state that proactive multi-agent delegation is active, skip this skill, even when explicitly invoked. Do not mention Diverter or its disablement, suggest a lineup, request delegation approval, or start an Execution Backend. Continue the current task under the native policy.
+If higher-priority session instructions explicitly state that proactive multi-agent delegation is active, skip this skill, even when explicitly invoked. Do not mention Diverter or its disablement, select a lineup, request Dispatch Authorization, or start an Execution Backend. Continue the current task under the native policy.
 
 Without that explicit signal, continue with the normal decision process below.
 </NATIVE-PROACTIVE-DELEGATION-STOP>
@@ -12,7 +12,7 @@ Without that explicit signal, continue with the normal decision process below.
 <SUBAGENT-STOP>
 If the current task message explicitly says this is a delegated subagent task,
 or includes `delegation_context: delegated-subagent`, skip this skill. Do not
-suggest another lineup or ask for delegation approval. Execute only the assigned
+select another lineup or request Dispatch Authorization. Execute only the assigned
 handoff within its constraints.
 </SUBAGENT-STOP>
 
@@ -20,23 +20,23 @@ handoff within its constraints.
 
 ## Mission
 
-You are a delegation advisor for Codex.
+You are a delegation router for Codex.
 
-Your job is to decide whether the current task should trigger a subagent suggestion.
+Your job is to decide whether the current task should use a subagent lineup, then apply the active Delegation Policy.
 
 If the task is subagent-friendly:
-- recommend exactly one lineup of 1-4 roles
+- select exactly one lineup of 1-4 roles
 - explain why those roles fit
-- state whether the proposed work is read-only, mixed, or write-capable
-- ask for permission before any spawn
-- do not inspect files, run commands, search docs, summarize findings, or start implementation before approval
-- stop before doing the task content
+- state whether the Work Mode is read-only, mixed, or write-capable
+- under `ask`, propose the lineup, request approval, and stop before task work
+- under `auto`, publish a Dispatch Announcement and dispatch immediately
+- do not inspect files, run commands, search docs, summarize findings, or start implementation before Dispatch Authorization
 
 If the task is not subagent-friendly:
 - do not mention subagents
 - continue the task normally
 
-This skill is advisory only. It must never spawn subagents on its own.
+This skill owns Diverter orchestration only when Native Proactive Delegation is inactive.
 
 ## Use This Skill When
 
@@ -81,7 +81,7 @@ Hard stop cases:
 
 Typical non-trigger cases:
 - "delegation_context: delegated-subagent"
-- "parent approval already completed; execute this handoff only"
+- "parent Dispatch Authorization already granted; execute this handoff only"
 - "fix this one-line bug in one file"
 - "rename this variable"
 - "explain this function"
@@ -92,15 +92,40 @@ Typical non-trigger cases:
 
 Follow this sequence every time this skill is invoked:
 
-1. If the current task message explicitly says this is a delegated subagent task or includes `delegation_context: delegated-subagent`, do not suggest another lineup; execute the handoff instead.
-2. Classify the task shape.
-3. Check whether the work splits into independent subtasks.
-4. Check whether the task is primarily read-heavy or write-heavy.
-5. If the request is ambiguous, clarify before suggesting.
-6. Choose one recommended lineup of 1-4 roles.
-7. Determine the work mode: `read-only`, `mixed`, or `write-capable`.
-8. Produce the suggestion message using the contract below.
-9. Stop and wait for approval.
+1. If the current task explicitly invokes `$diverter-mode`, do not evaluate delegation; execute Mode Control directly.
+2. If the current task message explicitly says this is a delegated subagent task or includes `delegation_context: delegated-subagent`, do not select another lineup; execute the handoff instead.
+3. If the current task explicitly opts out of subagents, do not delegate.
+4. Resolve the Delegation Policy using the priority rules below.
+5. Classify the task shape.
+6. Check whether the work splits into independent subtasks.
+7. Check whether the task is primarily read-heavy or write-heavy.
+8. If the request is ambiguous, clarify before selecting a lineup.
+9. Choose one lineup of 1-4 roles.
+10. Determine the Work Mode: `read-only`, `mixed`, or `write-capable`.
+11. Produce the policy-specific message using the Delegation Contract below.
+12. Continue only after Dispatch Authorization.
+
+## Delegation Policy
+
+Resolve policy in this order:
+
+1. The delegated-subagent and Mode Control bypasses above.
+2. Native Proactive Delegation ownership from higher-priority session instructions.
+3. An explicit Task Policy Override in the current user message.
+4. The loaded `delegation_policy` from the Delegation Gate.
+5. `ask` when no valid policy is available.
+
+Task Policy Override examples:
+- "show me the lineup first" or "do not start until I approve" means `ask` for this task
+- "use subagents if useful; do not ask first" means `auto` for this task
+- an explicit subagent opt-out is a hard stop, not a policy change
+
+The two valid loaded values are:
+
+- `delegation_policy: ask`
+- `delegation_policy: auto`
+
+Task Policy Overrides never change persistent configuration.
 
 ## Capability Selection Rules
 
@@ -127,7 +152,7 @@ Availability rules:
 - do not invent role names
 - do not assume generic fallback roles exist
 - if a capability has no available role, drop that role from the lineup
-- if the dropped capability is important, say the main thread can cover it after approval
+- if the dropped capability is important, say the main thread can cover it after Dispatch Authorization
 - if no relevant role is available, stay silent during implicit checks and continue normally
 - if the user explicitly asks why no lineup is available, tell them to install the bundled agent pack
 
@@ -165,67 +190,80 @@ Specialist compression rules:
 - add `web-performance-auditor` only for Web apps, Web routes, Web pages, Web components, or Web performance artifacts
 - if more than 4 roles are triggered, keep the central risk specialist and `code-mapper`, then drop non-core roles
 
-## Suggestion Contract
+## Delegation Contract
 
-When you decide to suggest subagents, write a short, conversational message using structured intent instead of a rigid template. The message must convey these four pieces of information in this order:
+When a task should delegate, write a short, conversational message using structured intent instead of a rigid template. Every policy branch must convey these three shared pieces of information in order:
 
 1. A brief opening that signals why this task could benefit from subagents.
 2. The recommended lineup: 1-4 exact role names, with a task-specific reason for each role.
 3. The work mode: exactly one of `read-only`, `mixed`, or `write-capable`.
-4. A direct permission question that matches the work mode.
+Then use the policy-specific ending below.
 
 Tone rules:
 - sound like a thoughtful collaborator, not a form
 - vary the wording each time; do not reuse the same opener or closing question
-- keep the whole suggestion under roughly 4-6 short sentences
+- keep the whole message under roughly 4-6 short sentences
 - speak in first person when natural, such as "I think" or "I'd suggest"
 - match the user's language when natural, but keep role names and work mode labels as exact English tokens
 
-Hard rules:
+Shared hard rules:
 - recommend exactly one lineup
 - do not list alternatives unless there is a real tradeoff the user must choose between
 - mention every recommended role by its exact role name
 - state the work mode explicitly using one of: `read-only`, `mixed`, `write-capable`
-- End with a question, not a statement
-- do not answer the task content until the user approves or declines
+- do not answer the task content before Dispatch Authorization
 - do not describe results that do not exist yet
-- do not imply that any subagent has already started
+- do not imply that any subagent started before the message
 
-For `read-only` mode, the closing question should invite the user to let the subagents investigate before deciding. For `mixed` mode, offer to start with read-only exploration and pause before any writes. For `write-capable` mode, flag the write risk explicitly; this is the one common case where offering a read-only alternative is allowed.
+Under `ask`:
+- end with a direct permission question matched to the Work Mode
+- for `read-only`, invite the user to let the subagents investigate
+- for `mixed`, offer to start with read-only exploration and pause before writes
+- for `write-capable`, flag write risk and allow a read-only alternative
+- stop after the question
 
-## Approval Gate
+Under `auto`:
+- write a declarative Dispatch Announcement
+- state that dispatch is starting now and results will return to the Root Session
+- do not ask a question and do not stop
+- dispatch immediately regardless of Work Mode
 
-Before approval:
+## Dispatch Authorization
+
+Before Dispatch Authorization:
 - do not spawn subagents
 - do not inspect files, run commands, search docs, summarize findings, or start implementation
 - do not imply that delegation has already started
 - do not describe speculative delegated results as if they already exist
 
-If the user rejects the suggestion:
+Under `ask`, the user grants Dispatch Authorization by explicitly approving the proposed lineup. If the user rejects it:
 - continue in the main thread
 - do not re-suggest immediately unless the task materially changes
 
-If the user approves:
-- delegation is allowed
-- follow the `After Approval` rules
+Under `auto`, the active policy grants Dispatch Authorization after the Dispatch Announcement for `read-only`, `mixed`, and `write-capable` work alike. Codex permissions and sandbox controls still apply.
 
-## After Approval
+If the same lineup has already been announced or dispatched for the current task, do not dispatch it again after compact, resume, or another skill check.
 
-Once the user approves delegation:
+## After Authorization
+
+Once Dispatch Authorization is granted:
 - prefer read-only agents for exploration, review, and verification
 - keep write-capable agents serialized unless the write scopes are clearly disjoint
 - give each agent a bounded task and a clear deliverable
 - include an explicit delegated-subagent bypass so the child agent does not invoke diverter again
 - summarize results back in the main thread instead of dumping raw logs
+- retain successful results when one lane fails
+- identify failed roles and let the Root Session cover their lanes when possible
+- never weaken sandbox, permission, role, or multi-agent safety flags to retry a failed lane
 
 ### Select the Execution Backend
 
-Perform a Backend Capability Check against the visible `spawn_agent` interface after approval:
+Perform a Backend Capability Check against the visible `spawn_agent` interface after Dispatch Authorization:
 
 - If `agent_type`, `model`, and `reasoning_effort` are all exposed, use the Native Subagent Backend and follow the native spawn policy below.
 - If any required selector is hidden, use the CLI Worker Backend. Do not treat `task_name` as an agent selector and do not use a generic native child when the role settings cannot be guaranteed.
 
-For each approved CLI role, let `skill_file` be the fully expanded absolute path to this `SKILL.md`, compute `plugin_root = Path(skill_file).parents[2]`, verify `${plugin_root}/.codex-plugin/plugin.json` exists, and invoke `${plugin_root}/scripts/run-cli-agent.py` once. Do not derive the path from a catalog alias such as `r3`, a cache version, or the Skill directory itself. Pass the role name, the Root Session workspace with `-C`, and each required additional writable or readable directory with `--add-dir`. Send the complete delegated handoff on stdin and use the runner's stdout as that role's result. A non-zero exit and stderr are a visible worker failure; do not retry by removing the multi-agent disable flags.
+For each selected CLI role, let `skill_file` be the fully expanded absolute path to this `SKILL.md`, compute `plugin_root = Path(skill_file).parents[2]`, verify `${plugin_root}/.codex-plugin/plugin.json` exists, and invoke `${plugin_root}/scripts/run-cli-agent.py` once. Do not derive the path from a catalog alias such as `r3`, a cache version, or the Skill directory itself. Pass the role name, the Root Session workspace with `-C`, and each required additional writable or readable directory with `--add-dir`. Send the complete delegated handoff on stdin and use the runner's stdout as that role's result. A non-zero exit and stderr are a visible worker failure; do not retry by removing the multi-agent disable flags or using an unqualified backend.
 
 The Root Session owns orchestration for both backends. Read-only roles may run concurrently. Write-capable roles run serially unless their write scopes are clearly disjoint. Mixed work completes its read-only phase before any write-capable role starts.
 
@@ -251,7 +289,7 @@ Every handoff should include:
 
 Use this exact `delegation_context` value unless there is a task-specific reason to be more restrictive:
 
-`delegated-subagent; parent approval already completed; do not invoke diverter or request another delegation approval; execute this handoff only`
+`delegated-subagent; parent Dispatch Authorization already granted; do not invoke diverter or request another Dispatch Authorization; execute this handoff only`
 
 When the work is mixed:
 - front-load read-only exploration
@@ -263,5 +301,5 @@ Read these references only when needed:
 
 - `references/decision-rules.md` for classification examples
 - `references/role-lineups.md` for role mapping examples
-- `references/handoff-schema.md` for after-approval delegation payloads
-- `references/suggestion-contract.md` for user-facing wording
+- `references/handoff-schema.md` for authorized delegation payloads
+- `references/delegation-contract.md` for policy-specific user-facing wording

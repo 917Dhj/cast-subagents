@@ -1,0 +1,7 @@
+interface:
+  display_name: "Diverter Mode"
+  short_description: "View or change Diverter's delegation policy."
+  default_prompt: "Show Diverter's configured delegation policy."
+
+policy:
+  allow_implicit_invocation: false

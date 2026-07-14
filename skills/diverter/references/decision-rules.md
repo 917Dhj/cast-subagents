@@ -1,6 +1,6 @@
 # Decision Rules
 
-Use this table to decide whether a task should trigger a subagent suggestion.
+Use this table to decide whether a task should trigger delegation.
 
 | Task shape | Main signal | Suggest subagents? | Capability archetype | Notes |
 | --- | --- | --- | --- | --- |
@@ -21,7 +21,7 @@ Use this table to decide whether a task should trigger a subagent suggestion.
 | Ambiguous request | unclear objective or missing success criteria | No | none | Clarify first. |
 | Immediate critical-path fact lookup | one answer blocks everything else | No | none | Get the answer first, then reassess. |
 | Explicit user opt-out | user says not to use subagents | No | none | Treat as a hard constraint. |
-| Delegated subagent handoff | current task message explicitly says this is a delegated subagent task or includes `delegation_context: delegated-subagent` | No | none | Execute the assigned handoff instead of recursing into advisory mode. |
+| Delegated subagent handoff | current task message explicitly says this is a delegated subagent task or includes `delegation_context: delegated-subagent` | No | none | Execute the assigned handoff instead of recursing into the Delegation Gate. |
 | Style-only wording tweak | no specialist view or parallel lane is needed | No | none | Stay in the main thread. |
 | Generic small PR review | only asks for one narrow bug, one small file, or style-only review | No | none | Avoid over-triggering multiple roles. |
 | Non-Web performance task | CLI, backend algorithm, database performance, compiler/runtime issue without Web UI | Maybe, but not `web-performance-auditor` | code mapping + code review | Use `code-mapper + reviewer` only if task is multi-lane. |

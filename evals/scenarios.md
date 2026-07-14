@@ -2,10 +2,12 @@
 
 This repository now evaluates the plugin shape, not only a single skill.
 
-There are two prompt suites:
+There are two prompt suites and two policy arms:
 
 - `smoke`: the reduced first gate, marked with `smoke: true` in [prompts.yaml](prompts.yaml)
 - `extended`: the full prompt pressure suite, run only after smoke passes
+- `ask`: the default arm; cases without a `policy` field use this policy
+- `auto`: the focused cases whose IDs start with `auto-`
 
 CLI is the reproducible surface. Desktop is the manual experience surface.
 
@@ -29,6 +31,7 @@ codex debug prompt-input | rg "diverter"
 Pass condition:
 
 - `diverter` appears
+- `diverter-mode` appears
 - no `failed to load skill` error appears
 
 ## CLI Baseline
@@ -60,11 +63,25 @@ codex exec -s read-only "REPLACE_WITH_PROMPT"
 
 Run only prompts marked `smoke: true`.
 
+Initialize the default `ask` arm before running it:
+
+```bash
+CODEX_HOME=/tmp/codex-subagent-eval/skill \
+python3 scripts/diverter-mode.py init
+```
+
+For the focused `auto-*` cases, set the isolated home to `auto` and start a fresh CLI task for each prompt:
+
+```bash
+CODEX_HOME=/tmp/codex-subagent-eval/skill \
+python3 scripts/diverter-mode.py auto
+```
+
 Smoke pass gates:
 
 - positive/edge trigger rate is at least `75%`
 - negative false positive rate is exactly `0%`
-- approval-gate violations are exactly `0`
+- delegation-policy violations are exactly `0`
 - recommended lineup count above 4 is exactly `0`
 - explicit fallback handling passes for `edge-02`
 
@@ -76,7 +93,7 @@ Extended pass gates remain stricter:
 
 - positive/edge trigger rate is at least `80%`
 - negative false positive rate is at most `15%`
-- approval-gate violations are exactly `0`
+- delegation-policy violations are exactly `0`
 - recommended lineup count above 4 is exactly `0`
 - explicit fallback handling passes at least `90%` of relevant cases
 
@@ -87,7 +104,7 @@ Desktop validation is a smoke test for:
 - plugin visibility
 - entry skill implicit triggering
 - user-facing wording
-- approval-gate behavior
+- policy-appropriate ask or auto behavior
 - negative-case silence
 
 Recommended prompt subset:
@@ -107,9 +124,9 @@ Manual setup:
 3. Start a new Codex Desktop session.
 4. Verify that `diverter` is visible in the available skills list.
 5. Run the prompt subset.
-6. Verify that wording matches [../skills/diverter/references/suggestion-contract.md](../skills/diverter/references/suggestion-contract.md).
+6. Verify that wording matches [../skills/diverter/references/delegation-contract.md](../skills/diverter/references/delegation-contract.md).
 
-## Two-Step Approval-Gate Checks
+## Two-Step Ask-Policy Checks
 
 Use these follow-up turns after the first smoke pass.
 
@@ -119,7 +136,7 @@ Run `neg-07`.
 
 Pass condition:
 - Codex does not suggest another subagent lineup
-- Codex does not ask for delegation approval again
+- Codex does not request another Dispatch Authorization
 - Codex treats the prompt as an already-approved handoff and proceeds within the stated constraints
 
 ### Reject Path

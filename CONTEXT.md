@@ -5,8 +5,32 @@ Diverter recommends and supplies specialized subagents while leaving the parent 
 ## Language
 
 **Root Session**:
-The user-controlled Codex session that evaluates a task, approves delegation, and integrates subagent results.
+The user-controlled Codex session that evaluates a task, owns Diverter orchestration when Native Proactive Delegation is inactive, and integrates subagent results.
 _Avoid_: Root agent configuration, managed root
+
+**Delegation Policy**:
+The user-level rule that determines whether Diverter waits for approval (`ask`) or dispatches immediately after announcing the lineup (`auto`) regardless of Work Mode. A successful change applies at the next `SessionStart` lifecycle event without project-level overrides; missing or invalid configuration resolves to `ask`.
+_Avoid_: Work mode, execution mode
+
+**Work Mode**:
+The write-risk classification of delegated work: `read-only`, `mixed`, or `write-capable`.
+_Avoid_: Delegation policy, Diverter mode
+
+**Dispatch Announcement**:
+The brief `auto` policy message that states why delegation fits, names exactly one lineup with role-specific assignments, and identifies the Work Mode before immediate dispatch. It is declarative and never requests approval.
+_Avoid_: Suggestion, approval request
+
+**Mode Control**:
+The explicit-only `$diverter-mode` skill that reads or changes the user-level Delegation Policy. It bypasses the Delegation Gate and never delegates its own work.
+_Avoid_: Core Diverter skill, implicit configuration
+
+**Task Policy Override**:
+An explicit user instruction that replaces the loaded Delegation Policy for one task when Diverter owns orchestration. It never changes the user-level configuration.
+_Avoid_: Mode change, persistent policy
+
+**Dispatch Authorization**:
+The permission to start a selected lineup. User approval grants it under `ask`; the loaded policy grants it under `auto`.
+_Avoid_: Work mode, tool permission
 
 **Bundled Subagent**:
 A specialized agent definition shipped by Diverter for delegated work. Diverter owns its default model configuration, and every bundled role enables live web search without requiring it to be used.
@@ -38,7 +62,7 @@ The validated Bundled Subagents chosen through the `recommended`, `all`, or cust
 _Avoid_: Lineup, active agents
 
 **Role Installer**:
-The plugin-provided script that installs the Selected Role Set into `${CODEX_HOME:-$HOME/.codex}/agents/` during the `.codex/INSTALL.md` flow. Codex runs it after installing the plugin; the user does not invoke it manually. It has no project-scoped mode and does not activate the Advisory Gate or modify instruction files.
+The plugin-provided script that installs the Selected Role Set into `${CODEX_HOME:-$HOME/.codex}/agents/` during the `.codex/INSTALL.md` flow. Codex runs it after installing the plugin; the user does not invoke it manually. It has no project-scoped mode and does not activate the Delegation Gate or modify instruction files.
 _Avoid_: Gate installer, plugin installer
 
 **Role Number**:
@@ -54,7 +78,7 @@ The release check that starts one Terra, one Luna, and one Sol Bundled Subagent 
 _Avoid_: Quality evaluation, benchmark
 
 **Execution Backend**:
-The mechanism the Root Session uses after delegation approval to run a Bundled Subagent while preserving its Static Model Mapping, sandbox, and developer instructions.
+The mechanism the Root Session uses after Dispatch Authorization to run a Bundled Subagent while preserving its Static Model Mapping, sandbox, and developer instructions.
 _Avoid_: Model router, fallback model
 
 **Native Subagent Backend**:
@@ -78,13 +102,13 @@ A Codex session policy that explicitly permits the Root Session to create subage
 _Avoid_: Ultra check, Sol check
 
 **Orchestration Ownership**:
-The rule that exactly one mechanism may coordinate subagent creation for a Root Session. Native Proactive Delegation owns orchestration whenever it is active; otherwise Diverter may advise after user approval.
+The rule that exactly one mechanism may coordinate subagent creation for a Root Session. Native Proactive Delegation owns orchestration whenever it is active; otherwise Diverter may coordinate under the active Delegation Policy.
 _Avoid_: Backend preference, delegation priority
 
-**Advisory Gate**:
-The Root Session checkpoint that decides whether a task merits a subagent recommendation before task work begins. It never starts subagents and always waits for user approval.
-_Avoid_: Automatic spawning, delegation engine
+**Delegation Gate**:
+The Root Session checkpoint that decides whether a task merits delegation before task work begins. The active Delegation Policy determines whether it waits for approval or dispatches immediately.
+_Avoid_: Advisory gate, execution backend
 
-**Advisory Gate Activation**:
-The delivery of the Advisory Gate to a Root Session so that the checkpoint applies throughout that session.
+**Delegation Gate Activation**:
+The delivery of the Delegation Gate to a Root Session so that the checkpoint applies throughout that session.
 _Avoid_: Automatic subagent trigger, AGENTS gate

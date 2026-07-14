@@ -1,7 +1,9 @@
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
 import unittest
 
 
@@ -9,6 +11,63 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class PluginContractTest(unittest.TestCase):
+    def test_mode_control_is_explicit_only_and_uses_the_mode_cli(self) -> None:
+        skill_dir = ROOT / "skills" / "diverter-mode"
+        skill = (skill_dir / "SKILL.md").read_text()
+        metadata = (skill_dir / "agents" / "openai.yaml").read_text()
+
+        self.assertIn("allow_implicit_invocation: false", metadata)
+        self.assertIn("scripts/diverter-mode.py", skill)
+        self.assertIn("`auto`", skill)
+        self.assertIn("`ask`", skill)
+        self.assertIn("`status`", skill)
+        self.assertIn("Diverter mode changed to", skill)
+        self.assertIn("Restart or reopen the task", skill)
+        self.assertIn("Never invoke `$diverter`", skill)
+
+    def test_session_start_loads_persisted_delegation_policy(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            codex_home = Path(temp_dir) / "codex-home"
+            config = codex_home / "diverter" / "config.json"
+            config.parent.mkdir(parents=True)
+            config.write_text('{"delegation_policy": "auto"}\n')
+
+            result = subprocess.run(
+                [sys.executable, ROOT / "hooks" / "session_start.py"],
+                input='{"source":"startup"}',
+                env={**os.environ, "CODEX_HOME": str(codex_home)},
+                text=True,
+                capture_output=True,
+                check=True,
+            )
+
+            self.assertIn("## Diverter Delegation Gate", result.stdout)
+            self.assertIn("delegation_policy: auto", result.stdout)
+            self.assertIn("$diverter-mode", result.stdout)
+
+    def test_session_start_falls_back_to_ask_for_missing_or_invalid_config(self) -> None:
+        for invalid_content in (None, "not json\n", '{"delegation_policy":"fast"}\n'):
+            with (
+                self.subTest(invalid_content=invalid_content),
+                tempfile.TemporaryDirectory() as temp_dir,
+            ):
+                codex_home = Path(temp_dir) / "codex-home"
+                if invalid_content is not None:
+                    config = codex_home / "diverter" / "config.json"
+                    config.parent.mkdir(parents=True)
+                    config.write_text(invalid_content)
+
+                result = subprocess.run(
+                    [sys.executable, ROOT / "hooks" / "session_start.py"],
+                    input='{"source":"compact"}',
+                    env={**os.environ, "CODEX_HOME": str(codex_home)},
+                    text=True,
+                    capture_output=True,
+                    check=True,
+                )
+
+                self.assertIn("delegation_policy: ask", result.stdout)
+
     def test_plugin_package_and_session_start_hook_are_discoverable(self) -> None:
         manifest = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text())
         marketplace = json.loads(
@@ -17,7 +76,7 @@ class PluginContractTest(unittest.TestCase):
         hooks = json.loads((ROOT / "hooks" / "hooks.json").read_text())
 
         self.assertEqual(manifest["name"], "diverter")
-        self.assertEqual(manifest["version"], "0.2.0")
+        self.assertEqual(manifest["version"], "0.3.0")
         self.assertEqual(manifest["interface"]["displayName"], "Diverter")
         self.assertEqual(manifest["skills"], "./skills/")
         self.assertNotIn("hooks", manifest)
@@ -44,6 +103,7 @@ class PluginContractTest(unittest.TestCase):
         self.assertIn("${PLUGIN_ROOT}/hooks/session_start.py", handler["command"])
         self.assertIn("$env:PLUGIN_ROOT", handler["commandWindows"])
         self.assertEqual(handler["timeout"], 5)
+        self.assertEqual(handler["statusMessage"], "Loading Diverter Delegation Gate...")
 
         result = subprocess.run(
             [sys.executable, ROOT / "hooks" / "session_start.py"],
@@ -52,11 +112,12 @@ class PluginContractTest(unittest.TestCase):
             capture_output=True,
             check=True,
         )
-        self.assertIn("Subagent Advisory Gate", result.stdout)
+        self.assertIn("Diverter Delegation Gate", result.stdout)
+        self.assertIn("delegation_policy: ask", result.stdout)
         self.assertIn("delegation_context: delegated-subagent", result.stdout)
         self.assertIn("invoke `$diverter` first", result.stdout)
 
-    def test_bundled_skill_is_the_only_skill_entry_and_selects_a_backend(self) -> None:
+    def test_core_skill_selects_policy_and_backend(self) -> None:
         skill_path = ROOT / "skills" / "diverter" / "SKILL.md"
         skill = skill_path.read_text()
 
@@ -66,12 +127,21 @@ class PluginContractTest(unittest.TestCase):
             "decision-rules.md",
             "role-lineups.md",
             "handoff-schema.md",
-            "suggestion-contract.md",
+            "delegation-contract.md",
             "examples-positive.md",
             "examples-negative.md",
         ):
             self.assertTrue((skill_path.parent / "references" / name).is_file(), name)
 
+        self.assertFalse(
+            (skill_path.parent / "references" / "suggestion-contract.md").exists()
+        )
+        self.assertIn("Delegation Policy", skill)
+        self.assertIn("Dispatch Authorization", skill)
+        self.assertIn("Dispatch Announcement", skill)
+        self.assertIn("delegation_policy: ask", skill)
+        self.assertIn("delegation_policy: auto", skill)
+        self.assertIn("regardless of Work Mode", skill)
         self.assertIn("Backend Capability Check", skill)
         self.assertIn("Native Subagent Backend", skill)
         self.assertIn("CLI Worker Backend", skill)
@@ -115,6 +185,11 @@ class PluginContractTest(unittest.TestCase):
         self.assertIn("DIVERTER_PLUGIN", guide)
         self.assertIn("/hooks", guide)
         self.assertIn("install-agent-roles.py", guide)
+        self.assertIn("scripts/diverter-mode.py\" init", guide)
+        self.assertIn("$diverter-mode auto", guide)
+        self.assertIn("$diverter-mode ask", guide)
+        self.assertIn("$diverter-mode status", guide)
+        self.assertIn("Diverter is installed in `ask` mode.", guide)
         self.assertIn("Python 3.11", guide)
         self.assertNotIn("npx skills", guide)
         self.assertNotIn("install-agents-gate.py", guide)
@@ -124,8 +199,9 @@ class PluginContractTest(unittest.TestCase):
             "### 2. Install the plugin",
             "### 3. Choose the global Bundled Subagents",
             "### 4. Run the Role Installer for the user",
-            "### 5. Trust the SessionStart Hook",
-            "### 6. Verify and restart",
+            "### 5. Initialize the Delegation Policy",
+            "### 6. Trust the SessionStart Hook",
+            "### 7. Verify and finish",
         )
         positions = [guide.index(heading) for heading in install_order]
         self.assertEqual(positions, sorted(positions))
