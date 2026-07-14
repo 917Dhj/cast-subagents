@@ -32,7 +32,7 @@
 ## Prompt-by-Prompt Results
 
 | ID | Suite | Policy | Score / 5 | Delegated? | Roles used | Policy-appropriate ending? | Notes |
-| --- | --- | --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | --- | --- | --- | --- |
 |  |  |  |  |  |  |  |  |
 
 Add one row for every evaluated entry in `prompts.yaml`, including the focused `auto-*` cases.

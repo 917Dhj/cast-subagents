@@ -1,0 +1,20 @@
+{
+  "name": "diverter-local-eval",
+  "interface": {
+    "displayName": "Diverter Local Evaluation"
+  },
+  "plugins": [
+    {
+      "name": "diverter",
+      "source": {
+        "source": "local",
+        "path": "./plugins/diverter"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -13,25 +13,42 @@ CLI is the reproducible surface. Desktop is the manual experience surface.
 
 ## Discovery Check
 
-Use an isolated home and copy the plugin skills into it:
+Use an isolated home and install this checkout as a local marketplace so both skills and the SessionStart Hook are present:
+
+The installed plugin must retain `hooks/session_start.py`; copying only `skills/` is not a valid policy test.
 
 ```bash
 rm -rf /tmp/codex-subagent-eval/skill
-mkdir -p /tmp/codex-subagent-eval/skill/skills
-cp -R skills/* /tmp/codex-subagent-eval/skill/skills/
+rm -rf /tmp/codex-subagent-eval/marketplace
+mkdir -p /tmp/codex-subagent-eval/skill
+mkdir -p /tmp/codex-subagent-eval/marketplace/plugins
+DIVERTER_PLUGIN_ROOT="$(pwd)"
+cp -R "$DIVERTER_PLUGIN_ROOT" /tmp/codex-subagent-eval/marketplace/plugins/diverter
+cp -R "$DIVERTER_PLUGIN_ROOT/evals/local-marketplace/.agents" \
+  /tmp/codex-subagent-eval/marketplace/.agents
+CODEX_HOME=/tmp/codex-subagent-eval/skill \
+codex plugin marketplace add /tmp/codex-subagent-eval/marketplace
+CODEX_HOME=/tmp/codex-subagent-eval/skill \
+codex plugin add diverter@diverter-local-eval --json \
+  > /tmp/codex-subagent-eval/plugin-install.json
+cat /tmp/codex-subagent-eval/plugin-install.json
+INSTALLED_PATH="$(python3 -c 'import json; print(json.load(open("/tmp/codex-subagent-eval/plugin-install.json"))["installedPath"])')"
+CODEX_HOME=/tmp/codex-subagent-eval/skill \
+python3 "$DIVERTER_PLUGIN_ROOT/scripts/install-agent-roles.py" --overwrite
 ```
 
-Confirm the bundled skill is visible:
+Keep the `installedPath` returned by `codex plugin add`. Confirm the implicit core skill is visible and the explicit-only Mode Control skill is present in the installed plugin:
 
 ```bash
 CODEX_HOME=/tmp/codex-subagent-eval/skill \
 codex debug prompt-input | rg "diverter"
+test -f "$INSTALLED_PATH/skills/diverter-mode/SKILL.md"
 ```
 
 Pass condition:
 
 - `diverter` appears
-- `diverter-mode` appears
+- the `diverter-mode` file check succeeds; it is intentionally absent from implicit prompt input
 - no `failed to load skill` error appears
 
 ## CLI Baseline
@@ -58,10 +75,12 @@ Use the discovered skill home from the discovery check:
 
 ```bash
 CODEX_HOME=/tmp/codex-subagent-eval/skill \
-codex exec -s read-only "REPLACE_WITH_PROMPT"
+codex exec --dangerously-bypass-hook-trust -s read-only "REPLACE_WITH_PROMPT"
 ```
 
 Run only prompts marked `smoke: true`.
+
+`--dangerously-bypass-hook-trust` is limited to this isolated automation home after reviewing the local Hook source. Interactive installation still requires normal `/hooks` review and trust.
 
 Initialize the default `ask` arm before running it:
 
@@ -76,6 +95,17 @@ For the focused `auto-*` cases, set the isolated home to `auto` and start a fres
 CODEX_HOME=/tmp/codex-subagent-eval/skill \
 python3 scripts/diverter-mode.py auto
 ```
+
+For cases with a `session_context` field, pass that value as evaluator-controlled developer context rather than appending it to the user prompt:
+
+```bash
+CODEX_HOME=/tmp/codex-subagent-eval/skill \
+codex exec --dangerously-bypass-hook-trust -s read-only \
+  -c "developer_instructions='REPLACE_WITH_SESSION_CONTEXT'" \
+  "REPLACE_WITH_PROMPT"
+```
+
+This is required for the Native Proactive Delegation, failure-recovery, and compact/resume checks. The provided focused context strings contain no single quotes; if a future case does, encode it as a valid TOML string before passing `-c`.
 
 Smoke pass gates:
 

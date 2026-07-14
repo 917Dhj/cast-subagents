@@ -404,15 +404,76 @@ prompts:
       - override the explicit opt-out
     notes: "Task opt-out wins over the saved auto policy."
 
-  - id: auto-edge-01
+  - id: auto-mode-bypass
     policy: auto
     surface: shared
     smoke: true
     category: edge
-    prompt: "$diverter-mode status"
+    prompt: "$diverter-mode"
     expected_should_suggest: false
     expected_should_dispatch: false
     expected_roles: []
     must_do:
       - bypass the core delegation gate
-    notes: "Mode Control is handled directly by the root agent."
+      - report status and list auto, ask, and status
+    notes: "Bare Mode Control is handled directly by the root agent."
+
+  - id: auto-override-ask
+    policy: auto
+    surface: shared
+    smoke: true
+    category: edge
+    prompt: "Review this branch with subagents, but show me the lineup first and do not start until I approve."
+    expected_should_suggest: true
+    expected_should_dispatch: false
+    expected_roles: [reviewer, code-mapper]
+    must_do:
+      - end with a direct permission question
+      - stop before dispatch
+    notes: "A current-task ask override wins over persisted auto."
+
+  - id: auto-native-bypass
+    policy: auto
+    surface: shared
+    smoke: true
+    category: edge
+    session_context: "Higher-priority session policy: proactive multi-agent delegation is active."
+    prompt: "Review this branch for bugs and missing tests."
+    expected_should_suggest: false
+    expected_should_dispatch: false
+    expected_roles: []
+    must_do:
+      - leave orchestration entirely to native proactive delegation
+    notes: "Native policy remains the sole Orchestration Owner."
+
+  - id: auto-failure-recovery
+    policy: auto
+    surface: shared
+    smoke: true
+    category: edge
+    session_context: "The reviewer lane succeeded. The code-mapper worker exited non-zero."
+    prompt: "Continue the automatically delegated branch review."
+    expected_should_suggest: false
+    expected_should_dispatch: false
+    expected_roles: []
+    must_do:
+      - retain the reviewer result and name the failed code-mapper lane
+      - let the root session cover the failed lane when possible
+    must_not_do:
+      - remove sandbox or multi-agent safety flags
+      - retry through an unqualified backend
+    notes: "Partial failure stays visible without weakening safety."
+
+  - id: auto-idempotency
+    policy: auto
+    surface: shared
+    smoke: true
+    category: edge
+    session_context: "After compact: reviewer and code-mapper were already announced and dispatched for this branch review."
+    prompt: "Continue the branch review and synthesize the delegated findings."
+    expected_should_suggest: false
+    expected_should_dispatch: false
+    expected_roles: []
+    must_not_do:
+      - dispatch reviewer or code-mapper again
+    notes: "Compact or resume must not duplicate the same lineup."

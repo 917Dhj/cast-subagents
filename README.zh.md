@@ -64,7 +64,7 @@ $diverter-mode auto
 $diverter-mode ask
 ```
 
-模式修改会在下一次 `SessionStart` 后对新建或重新打开的任务生效，不会改变当前任务已经加载的策略。
+模式修改不会立即生效，而会在下一次 `SessionStart` 事件（`startup`、`resume`、`clear` 或 `compact`）加载。重新启动或打开任务是最可预期的生效方式；同一任务后续发生上下文压缩时也可能加载新策略。
 
 ## 🎭 角色与阵容
 

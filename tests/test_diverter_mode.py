@@ -200,6 +200,22 @@ class DiverterModeTest(unittest.TestCase):
             )
             self.assertFalse((codex_home / "diverter" / "config.json").exists())
 
+    def test_expands_tilde_in_codex_home(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            home = Path(temp_dir) / "home"
+            home.mkdir()
+            result = subprocess.run(
+                [sys.executable, MODE_CLI, "auto"],
+                env={**os.environ, "HOME": str(home), "CODEX_HOME": "~/codex-home"},
+                cwd=temp_dir,
+                text=True,
+                capture_output=True,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+            config = home / "codex-home" / "diverter" / "config.json"
+            self.assertEqual(json.loads(config.read_text()), {"delegation_policy": "auto"})
+
 
 if __name__ == "__main__":
     unittest.main()

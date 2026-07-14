@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 def load_policy() -> str:
-    codex_home = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex"))
+    codex_home = Path(os.environ.get("CODEX_HOME", "~/.codex")).expanduser()
     path = codex_home / "diverter" / "config.json"
     try:
         data = json.loads(path.read_text(encoding="utf-8"))

@@ -64,7 +64,7 @@ $diverter-mode auto
 $diverter-mode ask
 ```
 
-Mode changes apply to new or reopened tasks after the next `SessionStart`; they do not alter the current task's loaded policy.
+Mode changes are not immediate. They apply at the next `SessionStart` event (`startup`, `resume`, `clear`, or `compact`), so restarting or reopening is the predictable way to apply one; a later compaction can also load it in the same task.
 
 ## 🎭 Roles & Lineups
 

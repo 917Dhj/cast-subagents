@@ -9,7 +9,7 @@ import tempfile
 
 
 def config_path() -> Path:
-    codex_home = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex"))
+    codex_home = Path(os.environ.get("CODEX_HOME", "~/.codex")).expanduser()
     return codex_home / "diverter" / "config.json"
 
 

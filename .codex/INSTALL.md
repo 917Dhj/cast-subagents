@@ -81,7 +81,7 @@ Initialize Diverter's user-level configuration:
 python3 "$DIVERTER_PLUGIN/scripts/diverter-mode.py" init
 ```
 
-On a fresh installation this creates the `ask` policy. On update or reinstall it preserves an existing valid `ask` or `auto` policy. If it reports `invalid_config`, stop and tell the user that the existing configuration was not overwritten.
+On a fresh installation this creates the `ask` policy. On update or reinstall it preserves an existing valid `ask` or `auto` policy. Keep the returned `delegation_policy` for the final response. If it reports `invalid_config`, stop and tell the user that the existing configuration was not overwritten.
 
 ### 6. Trust the SessionStart Hook
 
@@ -101,7 +101,7 @@ test -f "${CODEX_HOME:-$HOME/.codex}/diverter/config.json"
 End with the following fixed structure, translated into the user's language when needed. Keep commands and policy names exact:
 
 ```text
-Diverter is installed in `ask` mode.
+Diverter is installed in `<policy>` mode.
 
 Before using it, open `/hooks`, review Diverter's `SessionStart` Hook,
 and trust it. Then start or reopen a task.
@@ -116,6 +116,8 @@ Change the mode with:
 
 Mode changes apply at the next `SessionStart`.
 ```
+
+Replace `<policy>` with the exact `delegation_policy` returned by `init`. It is `ask` for a fresh installation and may be `auto` for a reinstall.
 
 ## Updating
 

@@ -45,6 +45,24 @@ class PluginContractTest(unittest.TestCase):
             self.assertIn("delegation_policy: auto", result.stdout)
             self.assertIn("$diverter-mode", result.stdout)
 
+    def test_session_start_expands_tilde_in_codex_home(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            home = Path(temp_dir) / "home"
+            config = home / "hook-home" / "diverter" / "config.json"
+            config.parent.mkdir(parents=True)
+            config.write_text('{"delegation_policy": "auto"}\n')
+
+            result = subprocess.run(
+                [sys.executable, ROOT / "hooks" / "session_start.py"],
+                env={**os.environ, "HOME": str(home), "CODEX_HOME": "~/hook-home"},
+                cwd=temp_dir,
+                text=True,
+                capture_output=True,
+                check=True,
+            )
+
+            self.assertIn("delegation_policy: auto", result.stdout)
+
     def test_session_start_falls_back_to_ask_for_missing_or_invalid_config(self) -> None:
         for invalid_content in (None, "not json\n", '{"delegation_policy":"fast"}\n'):
             with (
@@ -189,7 +207,7 @@ class PluginContractTest(unittest.TestCase):
         self.assertIn("$diverter-mode auto", guide)
         self.assertIn("$diverter-mode ask", guide)
         self.assertIn("$diverter-mode status", guide)
-        self.assertIn("Diverter is installed in `ask` mode.", guide)
+        self.assertIn("Diverter is installed in `<policy>` mode.", guide)
         self.assertIn("Python 3.11", guide)
         self.assertNotIn("npx skills", guide)
         self.assertNotIn("install-agents-gate.py", guide)
@@ -216,6 +234,25 @@ class PluginContractTest(unittest.TestCase):
             self.assertNotIn("AGENTS.md gate", readme, readme_name)
 
         self.assertFalse((ROOT / "scripts" / "install-agents-gate.py").exists())
+
+    def test_auto_smoke_covers_required_policy_boundaries(self) -> None:
+        prompts = (ROOT / "evals" / "prompts.yaml").read_text()
+        for case_id in (
+            "auto-pos-01",
+            "auto-pos-02",
+            "auto-neg-01",
+            "auto-neg-02",
+            "auto-override-ask",
+            "auto-mode-bypass",
+            "auto-native-bypass",
+            "auto-failure-recovery",
+            "auto-idempotency",
+        ):
+            self.assertIn(f"id: {case_id}", prompts)
+
+        scenarios = (ROOT / "evals" / "scenarios.md").read_text()
+        self.assertIn("hooks/session_start.py", scenarios)
+        self.assertIn("DIVERTER_PLUGIN_ROOT", scenarios)
 
     def test_readmes_explain_native_proactive_delegation_boundary(self) -> None:
         english = (ROOT / "README.md").read_text()

@@ -208,7 +208,7 @@ Tone rules:
 
 Shared hard rules:
 - recommend exactly one lineup
-- do not list alternatives unless there is a real tradeoff the user must choose between
+- do not list alternative lineups; if an unresolved user choice blocks one recommendation, clarify before delegation
 - mention every recommended role by its exact role name
 - state the work mode explicitly using one of: `read-only`, `mixed`, `write-capable`
 - do not answer the task content before Dispatch Authorization
