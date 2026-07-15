@@ -8,7 +8,6 @@
   <a href="README.md">English</a> | <a href="README.zh.md">简体中文</a>
 </p>
 
-
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
   <a href="https://github.com/openai/codex"><img src="https://img.shields.io/badge/OpenAI-Codex-000000?labelColor=555555" alt="OpenAI Codex"></a>
@@ -22,359 +21,121 @@
   <img src="assets/diverter-hero-tagline.png" alt="One task in. The right subagents out." width="480">
 </p>
 
-Outside sessions with native proactive delegation, that silence has a cost. Every time a task splits cleanly across multiple lanes — a multi-axis PR review, a codepath-plus-docs verification, an option research with parallel threads — Codex stays in the main thread by default. Diverter spots those task shapes, selects a bounded specialist lineup, and follows your configured delegation policy: ask first, or announce and dispatch automatically.
+Diverter routes suitable Codex work to a bounded specialist lineup while simple tasks stay in the main thread.
 
-It now recommends specialist lineups for code mapping, review, docs verification, security auditing, test strategy, targeted test automation, Web performance, and pre-ship quality gates.
+## ✨ A delegation instinct for Codex
 
-## 💬 See It In Action
+Diverter knows when to stay focused, when to split the work, which specialists to bring in, and how to keep every handoff bounded.
 
-This screenshot shows the default `ask` policy: Diverter identifies the task shape, names the lineup and Work Mode, asks one direct question, then stops. With `auto`, the same analysis becomes a brief Dispatch Announcement followed by immediate dispatch.
+<table>
+  <tr>
+    <td width="25%" align="center">
+      <a href="assets/diverter-demo-stay-focused.png">
+        <img src="assets/diverter-demo-stay-focused.png" alt="Stay Focused: a small task remains in the main thread while every specialist route stays closed">
+      </a>
+    </td>
+    <td width="25%" align="center">
+      <a href="assets/diverter-demo-split-evidence.png">
+        <img src="assets/diverter-demo-split-evidence.png" alt="Split the Evidence: Diverter sends code inspection and official documentation verification to read-only specialists">
+      </a>
+    </td>
+    <td width="25%" align="center">
+      <a href="assets/diverter-demo-bring-experts.png">
+        <img src="assets/diverter-demo-bring-experts.png" alt="Bring the Experts: Diverter assigns a high-risk security review to three read-only specialists">
+      </a>
+    </td>
+    <td width="25%" align="center">
+      <a href="assets/diverter-demo-write-guardrails.png">
+        <img src="assets/diverter-demo-write-guardrails.png" alt="Write with Guardrails: Diverter separates inspection from bounded test writing in mixed mode">
+      </a>
+    </td>
+  </tr>
+</table>
 
-![Two chat examples showing Diverter recommending subagent lineups](assets/diverter-demo-chat.png)
+## 🚀 Quick Start
 
-## 🤔 Why Diverter
+1. Tell Codex:
 
-Current Codex behavior has two paths: at most intelligence levels, delegation still requires an explicit request; with Ultra, native proactive delegation can start suitable parallel work automatically. See OpenAI's [subagent documentation](https://learn.chatgpt.com/docs/agent-configuration/subagents).
+   ```text
+   Fetch and follow instructions from https://raw.githubusercontent.com/917Dhj/Diverter/refs/heads/main/.codex/INSTALL.md
+   ```
 
-Diverter fills the first path's gap with a configurable delegation layer. The default `ask` policy preserves approval before dispatch. The optional `auto` policy uses the same decision rules and bounded handoffs, but dispatches immediately after telling you what it selected. When higher-priority session policy enables native proactive delegation, Diverter silently steps aside — even when explicitly invoked — so native orchestration remains the sole owner.
+2. After installation, open `/hooks`, review and trust Diverter's `SessionStart` Hook, then start or reopen a task.
 
-Both policies keep the same guardrails: simple tasks stay in the main thread, explicit opt-outs win, lineups are capped at four roles, and Codex permissions and sandbox rules remain unchanged.
+3. New installations start in `ask`. Inspect or change the user-level policy with:
 
-## 📦 Installation
+   ```text
+   $diverter-mode status
+   $diverter-mode auto
+   $diverter-mode ask
+   ```
 
-Tell Codex:
+| Policy | Behavior |
+|---|---|
+| `ask` | Proposes one lineup and waits for approval before dispatching |
+| `auto` | Announces one lineup and dispatches it immediately for any Work Mode |
 
-```
-Fetch and follow instructions from https://raw.githubusercontent.com/917Dhj/Diverter/refs/heads/main/.codex/INSTALL.md
-```
+Policy changes apply at the next `SessionStart`; restarting or reopening the task is the predictable way to apply one. `auto` changes dispatch authorization, not Codex permissions, sandboxing, or handoff write boundaries.
 
-The installation guide is the only supported entry point. Codex adds the repository marketplace, installs `diverter@diverter`, shows the complete GPT-5.6 role table, installs your selected roles globally, initializes the user-level policy to `ask`, and then asks you to trust the `SessionStart` Hook. You never need to run the Role Installer yourself. Start a new task after installation.
+## 🎭 Roles
 
-## 🚦 Delegation Policies
+Diverter includes ten Bundled Subagents. The installer offers the recommended set (`code-mapper`, `docs-researcher`, `reviewer`, `security-auditor`, `test-engineer`, and `test-automator`), all roles, or a custom selection.
 
-`ask` is the default. Diverter presents one lineup and waits for approval before dispatching.
+| Role | GPT-5.6 model | Reasoning effort | What it does |
+|---|---|---|---|
+| `code-mapper` | `gpt-5.6-terra` | `high` | Traces code paths, symbols, and ownership boundaries |
+| `search-specialist` | `gpt-5.6-luna` | `medium` | Gathers focused repository or external evidence |
+| `docs-researcher` | `gpt-5.6-luna` | `high` | Verifies official APIs, versions, and guarantees |
+| `knowledge-synthesizer` | `gpt-5.6-luna` | `high` | Reconciles long or conflicting findings |
+| `task-distributor` | `gpt-5.6-sol` | `medium` | Splits broad goals into bounded work packages |
+| `reviewer` | `gpt-5.6-sol` | `medium` | Reviews correctness, regressions, and maintainability |
+| `security-auditor` | `gpt-5.6-sol` | `high` | Audits trust boundaries, secrets, and agent-tool safety |
+| `test-engineer` | `gpt-5.6-luna` | `xhigh` | Designs minimal test coverage for behavior and risk |
+| `test-automator` | `gpt-5.6-terra` | `xhigh` | Adds bounded regression tests after behavior is clear |
+| `web-performance-auditor` | `gpt-5.6-luna` | `xhigh` | Audits Web performance evidence and Core Web Vitals risks |
 
-`auto` uses the same routing rules for `read-only`, `mixed`, and `write-capable` work. It announces the selected lineup and Work Mode, then dispatches immediately. It does not weaken Codex permissions, sandboxing, or write-scope rules.
-
-Use the explicit Mode Control skill to inspect or change the user-level default:
-
-```text
-$diverter-mode status
-$diverter-mode auto
-$diverter-mode ask
-```
-
-Mode changes are not immediate. They apply at the next `SessionStart` event (`startup`, `resume`, `clear`, or `compact`), so restarting or reopening is the predictable way to apply one; a later compaction can also load it in the same task.
-
-## 🎭 Roles & Lineups
-
-### Bundled roles
-
-Ten specialized roles are included in the `agents/categories/` directory. Their installation numbers are stable; future roles receive new numbers rather than reusing existing ones.
-
-| # | Role | GPT-5.6 model | Reasoning effort | What it does |
-|---:|---|---|---|---|
-| 1 | `code-mapper` | `gpt-5.6-terra` | `high` | Traces code paths, files, symbols, and ownership boundaries |
-| 2 | `search-specialist` | `gpt-5.6-luna` | `medium` | Gathers focused repository or external evidence |
-| 3 | `docs-researcher` | `gpt-5.6-luna` | `high` | Verifies official APIs, versions, and documented guarantees |
-| 4 | `knowledge-synthesizer` | `gpt-5.6-luna` | `high` | Reconciles long or conflicting findings without inventing facts |
-| 5 | `task-distributor` | `gpt-5.6-sol` | `medium` | Splits broad goals into bounded work packages |
-| 6 | `reviewer` | `gpt-5.6-sol` | `medium` | Reviews correctness, regressions, contracts, and maintainability |
-| 7 | `security-auditor` | `gpt-5.6-sol` | `high` | Audits trust boundaries, auth, secrets, and agent-tool safety |
-| 8 | `test-engineer` | `gpt-5.6-luna` | `xhigh` | Designs minimal test coverage for behavior and risk |
-| 9 | `test-automator` | `gpt-5.6-terra` | `xhigh` | Adds bounded regression tests after behavior is clear |
-| 10 | `web-performance-auditor` | `gpt-5.6-luna` | `xhigh` | Audits Web performance evidence and Core Web Vitals risks |
-
-The recommended installation set is roles `1,3,6,7,8,9`. The agent-friendly installer offers this set, all roles, or any custom selection and warns before overwriting selected same-name files.
-
-The skill selects capabilities first, then maps them to the roles that are actually available in your Codex environment. If a preferred role is missing, the skill says so explicitly rather than silently substituting.
-
-Specialist roles are not decorative. Diverter adds them only when the task contains a concrete independent security, test, performance, or release-risk signal.
-
-### Common lineups
-
-| Task shape | Recommended lineup | Work mode |
-|---|---|---|
-| General PR review | `reviewer + code-mapper` | `read-only` |
-| Security-sensitive review | `security-auditor + code-mapper + reviewer` | `read-only` |
-| Test coverage analysis | `test-engineer + code-mapper` | `read-only` |
-| Targeted regression tests | `test-engineer + test-automator + code-mapper` | `mixed` |
-| Web performance audit | `web-performance-auditor + code-mapper` | `read-only` |
-| Pre-ship quality gate | `reviewer + security-auditor + test-engineer + code-mapper` | `read-only` |
-| Codepath plus docs/API verification | `code-mapper + docs-researcher` | `read-only` |
-| Option research and tradeoff synthesis | `search-specialist + knowledge-synthesizer` | `read-only` |
-
-Specialist examples:
-
-| Task shape | Recommended lineup | Work mode |
-|---|---|---|
-| Auth / permission / token flow review | `security-auditor + code-mapper` | `read-only` |
-| LLM / agent tool safety review | `security-auditor + code-mapper + docs-researcher` | `read-only` |
-| Web performance audit with supplied metrics | `web-performance-auditor` | `read-only` |
-| Targeted regression tests | `test-engineer + test-automator + code-mapper` | `mixed` |
-
-The cap is four roles. If a task seems to need more, Diverter either compresses the lineup or stays silent rather than padding it out.
-
-These role names are compatible with VoltAgent/awesome-codex-subagents and similar community Codex subagent collections. If you use a custom role set, you can adapt `skills/diverter/references/role-lineups.md` to add your own task shape mappings.
+Diverter selects capabilities first, then maps them to roles available in your Codex environment. Missing preferred roles are reported rather than silently substituted. Custom role sets can adapt [`role-lineups.md`](skills/diverter/references/role-lineups.md).
 
 ## 🔄 Work Modes
 
-**`read-only`** — agents inspect, trace, and report. No files are written. This is the default for review, mapping, research, and verification tasks, and what Diverter defaults to when in doubt. Most suggestions use this mode.
+| Work Mode | Boundary |
+|---|---|
+| `read-only` | Inspect and report; never write files |
+| `mixed` | Investigate first, then perform bounded writes; writers stay serialized unless paths are explicitly disjoint |
+| `write-capable` | Edit only within the explicit handoff and sandbox |
 
-**`mixed`** — agents start with a read-only pass before bounded write-capable work. Under `ask`, dispatch waits for approval. Under `auto`, the full mixed workflow is authorized after the Dispatch Announcement; write-capable agents remain serialized unless their paths are explicitly disjoint.
+Diverter always names one Work Mode before dispatch.
 
-**`write-capable`** — agents may edit files within their assigned scope. Diverter uses this only for explicitly write-capable work. Test-writing tasks normally start as `mixed`: `test-engineer` and `code-mapper` clarify the behavior first, then `test-automator` writes targeted tests only when the scope is clear.
+## 🎯 When Diverter Delegates
 
-The mode is always stated using one of these three exact labels — you won't see a suggestion without knowing which one applies.
+At most intelligence levels, subagent delegation must be requested explicitly; Ultra may delegate proactively. Diverter fills the explicit-delegation path and silently steps aside when native proactive delegation owns the session. See OpenAI's [subagent documentation](https://learn.chatgpt.com/docs/agent-configuration/subagents).
 
-## 🎯 Decision Rules
+| Delegates when | Stays focused when |
+|---|---|
+| Independent work lanes can run in parallel | The task is simple or single-lane |
+| Code and official documentation need separate verification | Writes are tightly coupled, or one fact is needed first |
+| Security, test, performance, or release risk calls for a specialist | The user opts out explicitly, or the request is still ambiguous |
 
-### When Diverter speaks up
-
-Diverter looks for two kinds of signals: core delegation signals, where work splits into independent lanes, and specialist signals, where a concrete risk calls for a focused role.
-
-**Core delegation signals**
-
-- **Multi-axis review** — the task asks for several independent review angles on the same diff or branch.
-
-  > `Review this branch against main for bugs, security issues, missing tests, and maintainability risks.`
-
-- **Read-heavy codebase mapping** — the task requires tracing multiple paths or layers before any changes.
-
-  > `Map the auth flow first, then tell me whether the current implementation is safe to change.`
-
-- **Codepath plus docs/API verification** — the task needs both a code trace and a documentation check, and those can run in parallel.
-
-  > `先帮我查清楚代码路径，再去核对官方文档里这个 API 的行为。`
-
-- **Parallelizable research** — the task involves independent questions that don't block each other.
-
-  > `Research three approaches for background job retries and summarize the tradeoffs before we choose one.`
-
-- **Broad planning with separable subtasks** — the task is a high-level goal with clearly independent investigation lanes.
-
-  > `Map the relevant module boundaries first, then decide how to approach the change.`
-
-**Specialist signals**
-
-- **Security boundary** — auth, authorization, secrets, user input, webhooks, dependencies, or exploitable LLM/tool permissions are central to the task.
-
-  > `Review this auth refactor for permission bypasses, token handling issues, and missing server-side checks.`
-
-- **Test strategy or targeted regression tests** — the task asks which tests are missing, how to prove a bug fix, or how to add bounded regression coverage.
-
-  > `Look at the checkout flow and tell me what tests are missing before we change anything.`
-
-- **Web performance** — the task names frontend routes, Core Web Vitals, Lighthouse, LCP, INP, CLS, loading, rendering, or network behavior.
-
-  > `Audit the Next.js landing page for LCP, INP, CLS, image loading, and unnecessary client-side rendering.`
-
-- **Pre-ship quality gate** — the task asks for release readiness across code quality, tests, security, and risk.
-
-  > `Before we ship this branch, check code quality, security risk, and missing tests.`
-
-- **LLM or agent tool safety** — the task involves prompt injection, tool permissions, secrets in context, delegated agents, or destructive tool use.
-
-  > `Check whether this agent tool integration can leak secrets or let a subagent perform destructive actions without approval.`
-
-### When it stays quiet
-
-- **Trivial or single-file change** — a one-liner fix or rename doesn't benefit from delegation.
-
-  > `Fix this typo in the README.`
-
-- **Tightly coupled write work** — same-file changes with overlapping logic are safer in sequence.
-
-  > `就修这个单文件的小 bug，不要并行拆分。`
-
-- **Immediate fact lookup** — the task is blocked on one answer, so spawning agents first doesn't help.
-
-  > `What port is the dev server using right now?`
-
-- **Explicit opt-out** — if you say not to use subagents, that's a hard constraint.
-
-  > `Do not use subagents for this task.`
-
-- **Ambiguous request** — if the intent isn't clear enough to build a solid lineup, the skill asks for clarification first.
-
-The Chinese examples above are included intentionally. Diverter matches the user's language when writing suggestions; role names and work mode labels remain in English regardless of the prompt language.
+Diverter matches the user's language. Role names and Work Mode tokens remain in English.
 
 ## ⚙️ How It Works
 
-Diverter has three parts that work in sequence:
+1. The `SessionStart` Hook loads the user-level Delegation Policy and activates the Delegation Gate.
+2. Diverter first yields to native proactive delegation. Otherwise it decides whether to stay in the main thread or select one lineup of up to four roles and one Work Mode.
+3. `ask` waits for approval; `auto` announces and dispatches immediately. The execution backend then runs bounded handoffs through native custom agents or temporary leaf `codex exec` workers.
 
-- **The `SessionStart` Hook** loads the user-level policy and activates the Delegation Gate for the root session. It is restored after startup, resume, clear, and compaction without modifying instruction files.
-- **The core skill** classifies the task shape, selects a lineup of 1–4 roles, determines the Work Mode, and follows the loaded policy. It asks and waits under `ask`, or announces and dispatches under `auto`.
-- **The execution backend** runs authorized handoffs. Codex uses native custom agents when the spawn interface exposes role and model controls; otherwise it uses temporary `codex exec` workers that preserve each role's model, effort, sandbox, instructions, and live Web Search.
-
-CLI workers are leaf agents: multi-agent features are disabled, so they cannot delegate again.
-
-```
-User sends task
-      │
-      ▼
-SessionStart Hook loads policy and activates gate
-      │
-      ├── native proactive delegation is active
-      │         │
-      │         ▼
-      │     silently step aside → native policy continues
-      │
-      ├── task is simple / single-lane / opted out
-      │         │
-      │         ▼
-      │     stay silent → Codex continues normally
-      │
-      └── task has independent lanes
-                │
-                ▼
-          Diverter skill
-                │
-                ▼
-          classify task shape
-          select lineup (1–4 roles)
-          choose work mode
-          apply ask or auto policy
-                │
-                ▼
-      ┌─────────┴──────────┐
-      │                    │
-     ask                  auto
-      │                    │
- ask permission      announce lineup
-      │               and dispatch
- declined/approved         │
-      │                    │
-      └─────────┬──────────┘
-                ▼
-      main thread or authorized backend
-```
-
-### The Delegation Contract
-
-Every delegation response covers why the task benefits from subagents, the exact lineup with a reason per role, and the Work Mode. Under `ask`, it ends with one permission question and stops. Under `auto`, it gives a Dispatch Announcement without a question and immediately starts the authorized handoffs.
-
-Hard constraints are shared across both policies: exactly one lineup, no more than four roles, explicit scope, no safety weakening, and no duplicate dispatch of the same lineup for the current task.
-
-### After Authorization
-
-After Dispatch Authorization — user approval under `ask`, or session policy under `auto` — each agent gets a structured handoff that includes the goal, success criteria, scope boundaries, relevant file paths, write policy, and a verifiable deliverable. Here's what a typical handoff looks like:
-
-```text
-delegation_context: delegated-subagent; parent Dispatch Authorization already granted; do not invoke diverter or request another Dispatch Authorization; execute this handoff only
-goal: Map the affected code path for the settings save failure.
-success_criteria: Identify the real execution path, likely failure boundary,
-  and the files that own the behavior.
-scope_in: settings modal, client mutation, API route, response handling
-scope_out: unrelated settings pages, styling, copy updates
-relevant_paths: src/settings/, app/api/settings/, useSettingsForm
-constraints: read-only; no code edits; cite concrete files and symbols
-deliverable: concise summary with file references and one likely root cause
-verification: parent can trace the same path from your references
-write_policy: read-only
-open_questions: whether retries or optimistic updates affect the failure mode
-```
-
-No agent infers scope from context — everything is explicit. The full schema is in `skills/diverter/references/handoff-schema.md`.
-
-## ❓ FAQ
-
-**How do I choose between `ask` and `auto`?**
-
-Run `$diverter-mode ask` to require approval or `$diverter-mode auto` to dispatch after an announcement. Run `$diverter-mode status` to inspect the saved user-level default. Restart or reopen the task after changing it.
-
-**What happens when Codex enables native proactive delegation?**
-
-Diverter silently steps aside, even when explicitly invoked. It does not suggest a lineup, request approval, or start an execution backend; the native policy owns orchestration for that task.
-
-**Will it slow Codex down on simple tasks?**
-
-No. The `SessionStart` Hook loads the Delegation Gate once per root session lifecycle event. For simple, single-domain, or single-file work, the gate stays completely silent.
-
-**What if I want to skip the suggestion just this once?**
-
-Include a phrase like "do not use subagents" or "no subagents" in your prompt. Explicit task instructions override the saved policy, and opt-outs are a hard constraint. Under `ask`, you can also decline the proposed lineup.
-
-**Does it work with custom subagent collections?**
-
-Yes. The preferred role names are compatible with collections like VoltAgent/awesome-codex-subagents. If you use a custom set, edit `skills/diverter/references/role-lineups.md` to add your own task shape mappings. Diverter will use whatever roles are available and say so explicitly when a preferred role is missing.
-
-**Does it edit my code?**
-
-Diverter writes only when the selected Work Mode and handoff permit it. `auto` changes Dispatch Authorization, not Codex permissions or sandbox limits; write-capable agents remain bounded to their explicit scope.
-
-**Does it support non-English prompts?**
-
-Yes. Diverter matches your language when writing the suggestion. Role names and work mode labels remain in English as exact tokens, but the surrounding message follows the language of your prompt. Chinese is supported out of the box.
-
-**Can I customize which task shapes trigger a suggestion?**
-
-Yes. `skills/diverter/references/decision-rules.md` is the source of truth for task shape classification. `skills/diverter/references/role-lineups.md` controls lineup recommendations. Both are plain Markdown tables — edit them directly to add, remove, or adjust rules. No configuration language to learn.
-
-## 🗂 Project Structure
-
-```text
-diverter/
-├── .codex-plugin/
-│   └── plugin.json               # Plugin manifest
-├── .agents/plugins/
-│   └── marketplace.json          # Single-plugin marketplace
-├── .codex/
-│   └── INSTALL.md                # Agent-readable install instructions
-├── hooks/
-│   ├── hooks.json                # SessionStart registration
-│   └── session_start.py          # Policy loader and gate output
-├── skills/diverter/
-│   ├── SKILL.md                  # Core delegation router
-│   └── references/               # Rules, lineups, examples, and handoff schema
-├── skills/diverter-mode/         # Explicit user-level Mode Control
-├── agents/
-│   ├── openai.yaml               # Skill interface definition
-│   └── categories/
-│       ├── 01-core/
-│       │   └── code-mapper.toml
-│       ├── 02-research/
-│       │   ├── docs-researcher.toml
-│       │   ├── knowledge-synthesizer.toml
-│       │   └── search-specialist.toml
-│       ├── 03-planning/
-│       │   └── task-distributor.toml
-│       └── 04-quality/
-│           ├── reviewer.toml
-│           ├── security-auditor.toml
-│           ├── test-engineer.toml
-│           ├── test-automator.toml
-│           └── web-performance-auditor.toml
-├── scripts/
-│   ├── diverter-mode.py          # Reads and writes the user-level policy
-│   ├── install-agent-roles.py    # Installs bundled roles globally
-│   └── run-cli-agent.py          # Runs one temporary leaf CLI worker
-├── evals/
-│   ├── prompts.yaml
-│   ├── rubric.md
-│   ├── scenarios.md
-│   └── results/
-└── CHANGELOG.md
-```
-
-The skill's `references/` directory is where substantive policy changes go. `SKILL.md` loads these references at runtime, so you can tune decision rules, lineup tables, and wording without touching the skill logic itself.
+Every handoff carries an explicit goal, scope, write policy, and verifiable deliverable. See [`delegation-contract.md`](skills/diverter/references/delegation-contract.md) and [`handoff-schema.md`](skills/diverter/references/handoff-schema.md).
 
 ## 🙏 Acknowledgments
 
-The always-on gate pattern and session-bootstrap approach in this project were inspired by [obra/superpowers](https://github.com/obra/superpowers). The idea of using a session-bootstrap mechanism to ensure a gate runs before every task came directly from studying that project.
-
-The bundled role pack is a small, curated subset adapted from [VoltAgent/awesome-codex-subagents](https://github.com/VoltAgent/awesome-codex-subagents). It includes only the roles that Diverter commonly recommends, with light organization around this skill's decision rules rather than a full mirror of that collection.
-
-The role design for Staff Engineer review, security auditing, test strategy, and Web performance auditing was informed by [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills). The Diverter versions are rewritten for Codex subagent TOML roles and this project's configurable delegation model.
+- The always-on gate and session-bootstrap pattern was inspired by [obra/superpowers](https://github.com/obra/superpowers).
+- The bundled role pack is a curated adaptation of [VoltAgent/awesome-codex-subagents](https://github.com/VoltAgent/awesome-codex-subagents).
+- Review, security, test, and Web performance role design was informed by [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills).
 
 ## 🤝 Contributing & License
 
-Issues and pull requests are welcome. The most useful contributions are:
+Issues and pull requests are welcome. Useful contributions improve task-shape rules, role mappings, positive and negative examples, or eval scenarios. A good new rule includes both a prompt that should trigger delegation and a similar prompt that should stay focused.
 
-- New task shapes in `skills/diverter/references/decision-rules.md` with a matching lineup in `skills/diverter/references/role-lineups.md`
-- Positive and negative examples in `skills/diverter/references/examples-positive.md` and `skills/diverter/references/examples-negative.md` that ground the new rule in real prompts
-- Eval scenarios in `evals/scenarios.md` that cover edge cases where the current rules produce an unexpected result
-
-When adding a decision rule, the useful test is: can you write a prompt that should trigger it, and a similar-looking prompt that should stay silent? If both are in the example files, the rule is well-scoped.
+Start with [`decision-rules.md`](skills/diverter/references/decision-rules.md), [`role-lineups.md`](skills/diverter/references/role-lineups.md), and [`evals/scenarios.md`](evals/scenarios.md).
 
 This project is released under the [MIT License](LICENSE).
