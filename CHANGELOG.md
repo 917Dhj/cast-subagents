@@ -4,6 +4,11 @@
 
 - No unreleased changes.
 
+## 0.3.1 - 2026-07-18
+
+- Use `agent_type` with `fork_turns: "none"` so native subagents reliably apply each role's configured model and reasoning effort.
+- Recommend Codex CLI `0.145.0-alpha.20` or later for the full native subagent experience.
+
 ## 0.3.0 - 2026-07-15
 
 - Add persistent user-level `ask` and `auto` delegation policies, defaulting new installations to `ask`.
